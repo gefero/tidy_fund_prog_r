@@ -1,0 +1,307 @@
+---
+title: "Fundamentos de la programación estadística y Data Mining en R"
+subtitle: "Unidad 1. - Introducción (brevísima) a ggplot2"
+output: beamer_presentation
+colortheme: orchid
+fig_caption: TRUE
+fonttheme: professionalfonts
+highlight: tango
+#theme: Darmstadt
+theme: Boadilla
+toc: FALSE
+author: "Dr. Germán Rosati (Digital House - UNSAM - UNTREF)"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+---
+
+## ¿Qué es ggplot?      
+* Es un paquete de R que permite crear gráficos bastante más bonitos que los que se pueden generar con la libería base de R.
+* Se basa en la teoría de la "Gramática de Gráficos" -Grammar of Graphics -[de Wilkinson, Leland (2005)](https://www.cs.uic.edu/~wilkinson/TheGrammarOfGraphics/GOG.html)-
+* Provee un enfoque unificado y estadísticamente orientado para la generación de visualizaciones
+* Logra esto gracias al uso de objetos más "abstractos" que los objetos gráficos "elementales" de R.
+
+
+## Usando (rápidamente) ggplot2
+* Al menos tres formas
+    - `qplot` 
+    - `ggplot + geom_xxx`
+    - `ggplot + layer`
+* Nos enfocamos en la segunda.
+
+## Ejemplo rápido
+* Usamos el dataset `diamonds`
+* Subseteamos una parte del dataset
+```{r ch1, echo = TRUE, collapse=TRUE, cache=FALSE }
+library(ggplot2)
+data(diamonds)
+set.seed(42)
+small<-diamonds[sample(nrow(diamonds),1000),] 
+head(small)
+```
+
+
+## Ejemplo rápido
+* Veamos un ejemplo para la sintaxis de `ggplot2`:
+```{r ch2, echo=2, fig.keep="none"}
+library(ggplot2)
+ggplot(small) + 
+        geom_point(aes(x=carat,y=price,colour=cut)) +
+        scale_y_log10() +
+        facet_wrap(~cut) +
+        ggtitle("First example")
+```
+* La instrucción anterior nos devuelve...
+
+## Ejemplo rápido
+```{r ch3, echo=FALSE}
+library(ggplot2)
+ggplot(small) + 
+        geom_point(aes(x=carat,y=price,colour=cut)) +
+        scale_y_log10() +
+        facet_wrap(~cut) +
+        ggtitle("First example")
+```
+
+## Ejemplo rápido: descomponiendo el código
+1. Creamos el objeto ggplot y lo "llenamos" con los datos (siembre deberá ser un dataframe)
+```{r ch4, echo=TRUE, eval=FALSE}
+ggplot(small) +
+```
+2. Agregamos una capa estética (en este caso, de puntos)
+```{r ch5, echo=TRUE, eval=FALSE}
+geom_point(aes(x=carat,y=price,colour=cut)) +
+```
+3. "Facets": se usa para condicionar sobre variables
+```{r ch6, echo=TRUE, eval=FALSE}
+   facet_wrap(~cut) +
+```
+4. "Scales": se usa para definir escalas de las dimensiones, paletas de color, etc.
+```{r ch7, echo=TRUE, eval=FALSE}
+   scale_y_log10()
+```
+
+## Mapeo de estética
+* Todos los `geom_xxx()` requieren alguna capa referida a estética. Cada variable se "mapea" con alguna estética.
+* Para ello se usa la función `aes`: `geom_point(aes(x = var))`
+* Se pueden usar las siguientes:
+    + x: x position (required)
+    + y: y position (required)
+    + shape: shape of point
+    + colour: border colour
+    + size: size
+    + fill: internal colour
+    + alpha: transparency
+    
+## Mapeo de estéticas
+* Por eso usamos 
+```{r ch8, echo=TRUE, eval=FALSE}
+ggplot(small) + 
+        geom_point(aes(x=carat,y=price,colour=cut))
+``` 
+* También serían posibles otras formas:
+```{r ch9, echo=TRUE, eval=FALSE}
+ggplot(small,aes(x=carat,y=price,colour=cut)) + 
+        geom_point()
+
+ggplot(small,aes(x=carat,y=price)) + 
+        geom_point(aes(colour=cut))
+```
+
+## Mapeo de estéticas: una sutileza
+* Hay una diferencia entre setear y asignar estéticas.
+```{r ch10, echo=FALSE, eval=TRUE}
+p <- ggplot(small)
+```
+* La asignación (o "mapping") se hace a través de `aes`
+```{r ch11, fig.align='center', fig.height=2.5, fig.width=4, dev='pdf'}
+p + geom_point(aes(x=carat,y=price,colour=cut))
+```
+
+## Mapeo de estéticas: una sutileza
+* Pero el "setting" es decir, el hecho de fijar un valor a un determinado parámetro fijo se hace *fuera* de `aes`
+```{r ch12, fig.align='center', fig.height=2.5, fig.width=3.5, dev='pdf'}
+p + geom_point(aes(x=carat,y=price), colour="blue")
+```
+
+
+## Mapeo de estéticas: una sutileza
+* Tratar de fijar una estética dentro de `aes` ambas formas puede traer resultados inesperados:
+```{r ch13, fig.align='center', fig.height=2.5, fig.width=4, dev='pdf'}
+p + geom_point(aes(x=carat,y=price,colour="blue"))
+```
+
+## Faceting: condicionando sobre variables
+* `facet_xxx` se usa para condicionar sobre 1 o 2 varibles. Es decir, para producir un gráfico difernete para cada valor de la variable en `facet_xxx`. Veamos sobre la variable `cut`:
+```{r ch14, echo=TRUE, eval=FALSE}
+p + geom_point(aes(x=carat,y=price)) + 
+  facet_wrap(~cut)
+```
+
+## Faceting: condicionando sobre variables
+```{r ch15, echo=FALSE, fig.align='center'}
+p + geom_point(aes(x=carat,y=price)) + 
+  facet_wrap(~cut)
+```
+
+## Faceting: condicionando sobre variables
+* Con el argumento `nrow=1` generamos todos los gráficos sobre una sola fila.
+```{r ch16, echo=TRUE, eval=FALSE}
+p + geom_point(aes(x=carat,y=price)) + 
+  facet_wrap(~cut, nrow=1)
+```
+
+## Faceting: condicionando sobre variables
+```{r ch17, echo=FALSE, fig.align='center'}
+p + geom_point(aes(x=carat, y=price)) + 
+  facet_wrap(~cut, nrow=1)
+```
+
+## Faceting: condicionando sobre variables
+* Con el argumento `ncol=1` generamos todos los gráficos sobre una sola columna.
+```{r ch18, echo=TRUE, eval=FALSE}
+p + geom_point(aes(x=carat, y=price)) + 
+  facet_wrap(~cut, ncol=1)
+```
+
+## Faceting: condicionando sobre variables
+```{r ch19, echo=FALSE, fig.align='center'}
+p + geom_point(aes(x=carat, y=price)) + 
+  facet_wrap(~cut, ncol=1)
+```
+
+## Faceting: condicionando sobre variables
+* Usando la estética `facet_grid(cut~color)` generamos una grilla con los valores de `cut` y `color` y ploteamos un gráfico scatter para cada elemento de la grilla.
+```{r ch20, echo=TRUE, eval=FALSE}
+p + geom_point(aes(x=carat,y=price)) + 
+  facet_grid(cut~color)
+```
+
+## Faceting: condicionando sobre variables
+```{r ch21, echo=FALSE, fig.align='center'}
+p + geom_point(aes(x=carat,y=price)) + 
+  facet_grid(cut~color)
+```
+
+## Otras geometrías: `geom_smooth`
+* `geom_smooth` se usa para desplegar alguna línea de tendencia en los datos. 
+* Por defecto, usa un método llamado splines.
+```{r ch22, echo=TRUE, eval=FALSE}
+p <- ggplot(small,aes(x=carat,y=price))
+p + geom_point() + 
+  geom_smooth() + 
+  facet_wrap(~cut)
+```
+
+## Otras geometrías: `geom_smooth`
+```{r ch23, echo=FALSE, fig.align='center'}
+p <- ggplot(small,aes(x=carat,y=price))
+p + geom_point() +
+        geom_smooth() +
+        facet_wrap(~cut)
+```
+
+## Otras geometrías: `geom_smooth`
+* También se puede especificar alguna función para usar: en este caso una regresión lineal con `method='lm'`
+```{r ch24, echo=TRUE, eval=FALSE}
+p + geom_point() + 
+        geom_smooth(method="lm") + 
+        facet_wrap(~cut)
+```
+
+## Otras geometrías: `geom_smooth`
+```{r ch25, echo=FALSE, fig.align='center'}
+p + geom_point() + 
+        geom_smooth(method="lm") + 
+        facet_wrap(~cut)
+```
+
+## Otras geometrías: `geom_smooth`
+* Pasemos en limpio...
+```{r ch26, echo=TRUE, eval=FALSE}
+p <- ggplot(diamonds, aes(x=carat, y=price, colour=cut))
+p <- p + scale_x_log10() + scale_y_log10()
+p <- p + geom_point(alpha=0.3) +
+        geom_smooth(method='loess', colour='black')
+p <- p + facet_wrap(~cut)
+print(p)
+```
+
+## Otras geometrías: `geom_smooth`
+```{r ch27, echo=FALSE, fig.align='center'}
+p <- ggplot(diamonds, aes(x=carat, y=price, colour=cut))
+p <- p + scale_x_log10() + scale_y_log10()
+p <- p + geom_point(alpha=0.3) +
+        geom_smooth(method='loess',colour='black')
+p <- p + facet_wrap(~cut)
+print(p)
+```
+
+## Otras geometrías: density plots
+* En muchos casos los gráficos de densidad suelen ser más claros que los histogramas para analizar la distribución de variables cuantitativas.
+```{r ch28, fig.height=2, fig.width=3.7, fig.align='center'}
+ggplot(small) + 
+        geom_density(aes(x=price))
+```
+
+
+## Otras geometrías: density plots
+```{r ch29, fig.height=2, fig.width=3.7, fig.align='center'}
+ggplot(small) + 
+        geom_density(aes(x=price, fill=cut))
+```
+
+## Otras geometrías: density plots
+```{r ch30, fig.height=2, fig.width=3.7, fig.align='center'}
+ggplot(small) + 
+        geom_density(aes(x=price, fill=clarity))
+```
+
+## Otras geometrías: density plots
+* Podemos usar alguna transparencia para distinguir entre las distribuciones
+```{r ch31, fig.height=2, fig.width=3.7, fig.align='center'}
+ggplot(small) + 
+        geom_density(aes(x=price, fill=cut), alpha=0.5)
+```
+
+## Otras geometrías: density plots
+* O usar `colour` en lugar de `fill`
+```{r ch32, fig.height=2, fig.width=3.7, fig.align='center'}
+ggplot(small) + 
+        geom_density(aes(x=price, colour=cut))
+```
+
+
+## Otras geometrías: box plots
+* Se puede usar `geom_boxplot()`
+```{r ch33, fig.height=2, fig.width=3.7, fig.align='center'}
+ggplot(small)+ 
+        geom_boxplot(aes(x=cut, y=price))
+```
+
+## Otras geometrías: box plots 
+* Al igual que en el módulo base de gráficos de R, podemos confeccionar un boxplot de una variable cuantitativa para diferentes valores de otra variable, simplemente definiendo los parámetros `x=[var1], y=[var2]`.
+```{r ch34a, echo=TRUE, eval=FALSE} 
+ggplot(small) + 
+        geom_boxplot(aes(x=cut, y=price, fill=color))
+```
+
+## Otras geometrías: box plots 
+```{r ch34b, echo=FALSE, fig.align='center'} 
+ggplot(small) + 
+        geom_boxplot(aes(x=cut, y=price, fill=color))
+```
+
+## Otras geometrías
+* Hay muchísimas otras geometrías para explorar en `ggplot2`
+    + geom_abline, geom_jitter, geom_area, geom_line
+    + geom_bar, geom_linerange, geom_bin2d, geom_path
+    + geom_blank, geom_point, geom_boxplot, geom_pointrange
+    + geom_contour, geom_polygon, geom_crossbar, geom_quantile     + geom_density, geom_rect, geom_density2d, geom_ribbon
+    + geom_errorbar, geom_rug, geom_errorbarh, geom_segment
+    + geom_freqpoly, geom_smooth, geom_hex, geom_step
+    + geom_histogram, geom_text, geom_hline, geom_tile
+    + geom_vline, etc.
+ 
+## Otros recursos:
+* Libro de [Hadley Wickham](https://link.springer.com/book/10.1007%2F978-0-387-98141-3).
+* Web de `GGplot2`: http://docs.ggplot2.org
+* Muchos tutoriales online...

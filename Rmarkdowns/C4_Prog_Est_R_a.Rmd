@@ -1,0 +1,139 @@
+---
+title: "Fundamentos de la programación estadística y Data Mining en R"
+author: "Dr. Germán Rosati (Digital House - UNTREF - UNSAM)"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output: slidy_presentation
+---
+
+# Regresión lineal
+* Todos nos acordamos del modelo lineal:
+        +$$Y_{i}=\beta_{0} + \beta_{1}*X_{i} + \epsilon_{i}$$
+* Los parámetros del modelo son muy fáciles de interpretar:
+        + $\beta_{0}$ es el intercepto
+        + $\beta_{1}$ es la pendiente de la variable $X$; es decir el efecto medio en $Y$ cuando $X$ se incrementa en una unidad (y todo lo demás, se mantiene constante)
+        + $\epsilon_{i}$ es el error o residuo de estimación
+
+# Regresión lineal
+* En un modelo lineal buscamos "minimizar" una determinada métrica de error. En particular, buscamos hacer mínimo el error cuadrático medio (MSE):
+        + $$MSE=\frac{1}{n}\sum_{i=1}^{n}(Y_{i}-\hat{Y_{i}})^2$$
+
+
+# Regresión lineal: implementación en R ``lm()``
+* Para implementar en R una regresión lineal simple usamos la función ``lm()``
+* ``formula``: una expresión con la siguiente forma: ``y~x``
+* ``data``: dataframe o datamatrix a utilizar
+* ``subset``: un vector que define un subconjunto de datos a usar en el modelo
+* ``weights``: vector que define pesos para la regresión (WLNS)
+
+# Regresión lineal: implementación en R ``lm()``
+```{r, highlight=TRUE, prompt=TRUE, strip.white=FALSE, collapse=TRUE, tidy=TRUE, fig.width=4, fig.height=3.5}
+library(MASS)
+data(Boston)
+plot(Boston$lstat,Boston$medv)
+plot(log(Boston$lstat),Boston$medv)
+```
+
+
+# Regresión lineal: implementación en R ``lm()``
+```{r, highlight=TRUE, prompt=TRUE, strip.white=FALSE, collapse=FALSE, tidy=TRUE}
+model = lm(medv ~ log(lstat), data = Boston) 
+model
+```
+* Si imprimimos el modelo... solamente nos da una información básica: el intercepto y el valor de la pendiente.
+
+# Regresión lineal: implementación en R ``lm()``
+```{r, highlight=TRUE, prompt=TRUE, strip.white=FALSE, collapse=TRUE, tidy=TRUE}
+summary(model)
+```
+* Ahora tenemos acceso a mucha más información:
+* p-valores y errores estándar de los coeficientes. ¿Son significativos?
+* $R^2$: 66% de la variancia de la variable dependiente es explicada por el modelo
+        
+# Regresión lineal: implementación en R ``lm()``
+```{r, highlight=TRUE, prompt=TRUE, strip.white=FALSE, collapse=TRUE, tidy=TRUE}
+names(model)
+```
+* Usamos la función ``names`` para acceder a los objetos dentro del objeto ``model``
+* Luego, podemos ir usando los nombres para acceder a los diferentes elementos
+```{r, highlight=TRUE, prompt=TRUE, strip.white=FALSE, collapse=TRUE, tidy=TRUE}
+model$coefficients
+```
+
+# Regresión lineal: implementación en R ``lm()``
+* Algunas funciones útiles:
+```{r, highlight=TRUE, prompt=TRUE, strip.white=FALSE, collapse=TRUE, tidy=TRUE}
+coef(model)
+confint(model,level=0.95)
+```
+* Obtenemos intervalos de confianza de los parámetros del modelo.
+
+# Regresión lineal: implementación en R ``lm()``
+* Veamos la función ``predict()``
+```{r, highlight=TRUE, prompt=TRUE, strip.white=FALSE, collapse=TRUE, tidy=TRUE}
+predict(model, data.frame(lstat = c(5,10,15), interval = "prediction"))
+```
+* Es decir, que para si la variable independiente ``lstat`` presentara los valores 5, 10 y 15, la variable dependiente ``medv`` presentaría esos valores (en la media).
+
+# Regresión lineal: implementación en R ``lm()``
+* Grafiquemos, ahora, todo.
+```{r, fig.width=4, fig.height=3.5}
+plot(log(Boston$lstat),Boston$medv,
+     xlab = "Log del % de hogares con NES bajo", 
+     ylab = "Valor Mediano de las Viviendas", 
+     col = "red", 
+     pch = 20)
+abline(model, col="blue")
+```
+
+# Regresión lineal múltiple: implementación en R ``lm()``
+* Generemos un modelo, ahora, que contenga todas las variables del dataset.
+* Veamos, primero, la correlación entre varias variables: 
+```{r, highlight=TRUE, prompt=TRUE, strip.white=FALSE, collapse=TRUE, tidy=TRUE}
+cor(Boston[,10:14])
+```
+* La función ``cor`` tiene varios argumentos
+* ``x``, ``y``: las variables (si todas son cuantitativas podemos pasar todo el dataframe)
+* ``method``: qué coeficiente(s) se va(n) a usar... ¿Pearson, Spearmen o Kenndall)?
+
+# Regresión lineal múltiple: implementación en R ``lm()``
+* Mucho mejor es verlo en una matriz de gráficos...
+``````{r, fig.width=4, fig.height=3.5}
+pairs(Boston[,10:14])
+```
+
+# Regresión lineal múltiple: implementación en R ``lm()``
+* Implementemos un modelo con todas las variables
+```{r, highlight=TRUE, prompt=TRUE, strip.white=FALSE, collapse=TRUE, tidy=TRUE}
+model <- lm(medv~., data = Boston)
+summary(model)
+```
+
+# Regresión lineal múltiple: implementación en R ``lm()``
+* Pero momento... habíamos precisado en el primer modelo que ``lstat`` entraba en forma logarítmica...
+```{r, highlight=TRUE, prompt=TRUE, strip.white=FALSE, collapse=TRUE, tidy=TRUE}
+model <- lm(medv~.-lstat + log(lstat), data = Boston)
+summary(model)
+```
+
+## Regresión lineal múltiple: implementación en R ``vif()``
+* Vamos a analizar la multicolinealidad entre los predictores. Usaremos la función ``vif()`` del paquete ``car``
+```{r, highlight=TRUE, prompt=TRUE, strip.white=FALSE, collapse=TRUE, tidy=TRUE}
+library(car)
+vif(model)
+```
+* Pareciera que ``tax`` y ``rad`` están muy correlacionadas con al menos un predictor. Entonces, podríamos reestimar el modelo eliminándolas.
+
+# Regresión lineal múltiple: implementación en R ``vif()``
+```{r, highlight=TRUE, prompt=TRUE, strip.white=FALSE, collapse=TRUE, tidy=TRUE}
+model <- lm(medv~.-lstat + log(lstat) -tax -rad, data = Boston)
+```
+
+# Regresión lineal múltiple: interacciones 
+* Supongamos que quisiéramos agregar alguna interacción podemos hacerlo con la siguiente sintaxis ``log(lstat)*age`` que agrega tanto los términos de interacción como los efectos de cada variable por separado. 
+* Si quisiéramos introducir solamente la interacción deberíamos usar ``log(lstat)*age``
+```{r, highlight=TRUE, prompt=TRUE, strip.white=FALSE, collapse=TRUE, tidy=TRUE}
+mod<-lm(medv ~ log(lstat)*age, data=Boston)
+model <- lm(medv ~ log(lstat)*age, data = Boston)
+mod
+model
+```

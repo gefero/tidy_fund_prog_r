@@ -1,0 +1,349 @@
+---
+title: "Fundamentos de la programación estadística y Data Mining en R"
+subtitle: "Unidad 1. Estructuras de control y funciones en R"
+output: beamer_presentation
+colortheme: orchid
+fig_caption: TRUE
+fonttheme: professionalfonts
+highlight: tango
+#theme: Darmstadt
+theme: Boadilla
+toc: FALSE
+author: "Dr. Germán Rosati (Digital House - UNSAM - UNTREF)"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+---
+
+# Estructuras de control
+* Hasta aquí hemos trabajado con la sesión interactiva. Pero en general suele ser más efectivo trabajar con scripts que realicen tareas más complejas que las que podemos hacer de la línea de comando.
+* Lo que permiten las llamadas estructuras de control es poder generar programas que realicen estas tareas.
+
+# Estructuras de control
+* Las estructuras de control permiten manejar el flujo de ejecución de un programa. Algunas estructuras comunes son:
+	+ `if`, `else`: testea una condición
+	+ `for`: loop que ejecuta un bloque de código un número determinado de veces
+	+ `while`: loop que ejecuta un bloque de código un número indeterminado de veces, mientras se cumpla una condición determinada
+	+ `repeat`: ejecuta un loop infinitas veces
+	+ `break`: sale de la ejecución de un loop
+	+ `next`: saltea una iteración de un loop
+	* `return`: devuelve un valor dentro de una función
+
+# Estructuras de control: `if`
+* Un `if` testea una condición y si la misma es verdadera, ejecuta un deteminado bloque de código. Un ejemplo de una estructura `if` válida:
+```{r, highlight=TRUE, prompt=TRUE, strip.white=FALSE, collapse=TRUE, tidy=TRUE}
+x<-5
+if (x > 3){
+        y <- 10
+} else {
+        y <- 0
+}
+x
+y
+```
+
+
+# Estructuras de control: `for` loops
+* Un `for` loop toma un "iterador" y le asigna sucesivos valores de una secuencia de elementos o de un vector. Este tipo de loop se usa habitualmente para iterar o recorrer los elementos de un objeto (una lista, un vector, etc.)
+```{r, highlight=TRUE, prompt=TRUE, strip.white=FALSE, collapse=TRUE, tidy=TRUE}
+for (i in 1:3){
+	print(i)
+}
+```
+* Este loop toma el iterador `i` y le asigna en cada iteración un valor en la secuencia 1 a 3. Luego, imprime el valor de `i` y al llegar al final de la secuencia sale del loop.
+
+# Estructuras de control: `for` loops
+* Los siguientes loops tienen el mismo funcionamiento y devuelven el mismo resultado:
+```{r, highlight=TRUE, prompt=TRUE, strip.white=FALSE, collapse=TRUE, tidy=TRUE}
+x<-c("a","b","c","d")
+for (i in 1:4){
+	print(x[i])
+}
+```
+
+# Estructuras de control: `for` loops
+* Las siguientes tres estructuras de `for` loops tienen el mismo funcionamiento y devuelven el mismo resultado:
+```{r, highlight=TRUE, prompt=TRUE, strip.white=FALSE, collapse=TRUE, tidy=TRUE}
+x<-c("a","b","c","d")
+for (i in seq(1,length(x))){
+	print(x[i])
+}
+```
+
+# Estructuras de control: `for` loops
+```{r, highlight=TRUE, prompt=TRUE, strip.white=FALSE, collapse=TRUE, tidy=TRUE}
+for (i in seq_along(x)){
+	print(x[i])
+}
+for (letra in x){
+	print(letra)
+}
+```
+
+
+# Estructuras de control: `for` loops
+* Se pueden anidar muchos `for` loops:
+```{r, highlight=TRUE, prompt=TRUE, strip.white=FALSE, collapse=TRUE, tidy=TRUE}
+x<-matrix(1:6,2,3) #¿Qué genera esta línea? 
+for (i in 1:nrow(x)){
+	for (j in 1:ncol(x)){
+		print(x[i,j])
+	}
+}
+```
+
+# Estructuras de control: `for` loops
+* En general, hay que tener cuidado cuando se anidan for loops. Anidar más de 2-3 niveles puede hacer el código muy lento y, además, difícil de entender.
+
+# Estructuras de control: `while` loops
+* Los `while` loops empiezan testeando una condición. Si la condición es verdadera ejecutan el bloque de código debajo del `while`.  Una vez que se ejecuta el bloque, se vuelve a testar la condición,
+* Cuando la condición se hace falsa sale del loop.
+```{r, highlight=TRUE, prompt=TRUE, strip.white=FALSE, results='markup', collapse=TRUE, tidy=TRUE}
+count<-0
+while(count < 4){
+        print(count)
+        count<-count + 1 
+}
+```
+* El problema es que pueden generarse loops infitos...
+
+# Estructuras de control: `while` loops
+* Puede haber más de una condición a testear en el `while`
+```{r, highlight=TRUE, prompt=TRUE, strip.white=FALSE, results='hide', collapse=TRUE, tidy=TRUE}
+z<-5
+while(z > 3 & z < 9){
+        print(z)
+        coin<-rbinom(1,1,0.5)
+        if (coin == 1){
+                z<-z+1
+        } else {
+                z<-z-1
+        }
+}
+```
+
+# Estructuras de control: `next`, `break`
+* ``next`` se usa para saltear una iteración en un loop
+```{r, highlight=TRUE, prompt=TRUE, strip.white=FALSE, results='markup', collapse=TRUE, tidy=TRUE}
+for (i in 1:6){
+        if (i<=2){
+                next
+        }
+        print(i)
+}
+```
+* `break` se usa para salir de un loop (aún cuando una condición no se cumpla).
+
+# Funciones especiales: la familia `apply()`
+* En muchos casos, suele ser útil usar algunas de estas funciones para correr loops sin tener que escribir un `for` o un `while()` de forma explícita. Para eso sirven las funciones de la familia `apply()`.
+* Vamos a ver una de estas funciones: `apply()`
+	+ Suele usarse para aplicar una función sobre las filas o columnas de una matriz
+	+ Puede usarse con arrays de cualquier dimensión
+	+ En términos de performance no es mejor que un `for` (no se ejecuta más rápido). Pero sí es más fácil de escribir.
+	
+# Funciones especiales: la familia `apply()`
+```{r, highlight=TRUE, prompt=TRUE, strip.white=FALSE, results='markup', collapse=TRUE, tidy=TRUE}
+str(apply)
+```
+* `x` es un array (o matriz)
+* `MARGIN` es un vector de integer indicando sobre qué márgenes (por ejemplo, filas o columnas) debe aplicarse la función
+* `FUNCTION` es la función a aplicar
+
+# Funciones especiales: la familia `apply()`
+```{r, highlight=TRUE, prompt=TRUE, strip.white=FALSE, results='asis', collapse=TRUE, tidy=TRUE}
+options(digits=4)
+x<-matrix(rnorm(200),20,10)
+apply(x,2,mean) # media sobre columnas
+apply(x,1,sum) # suma sobre filas
+```
+
+# Funciones especiales: la familia `apply()`
+* Para sumas y medias sobre filas y columnas existen algunas funciones mucho más optimizadas que los `apply()`
+	+ `colSums` == `apply(x,2,sum)`
+	+ `rowSums` == `apply(x,1,sum)`
+	+ `colMeans` == `apply(x,2,mean)`
+	+ `rowMeans` == `apply(x,1,mean)`
+	
+# Funciones especiales: la familia `apply()`
+* Otra forma de usar `apply()`: calcular cuartiles sobre las columnas de una matriz.
+```{r, highlight=TRUE, prompt=TRUE, strip.white=FALSE, collapse=TRUE, tidy=TRUE}
+options(digits=4)
+x<-matrix(rnorm(200),40,5)
+apply(x,2,quantile,probs=c(0.25,0.5,0.75))
+```
+
+# Funciones especiales: `lapply()`
+* Otra función de la familia es `lapply()`. Se usa para recorrer una lista y evaluar una función en cada uno de sus elementos.
+```{r, highlight=TRUE, prompt=TRUE, strip.white=FALSE, collapse=TRUE, tidy=TRUE}
+str(lapply)
+```
+* `x` es una lista a recorrer
+* `FUN` una función a evaluar
+* `...` otros argumentos de ``FUN``
+* Siempre devuelve una lista independientemente de la clase del input.
+
+# Funciones especiales: `lapply()`
+```{r, highlight=TRUE, prompt=TRUE, strip.white=FALSE, collapse=TRUE, tidy=TRUE}
+x<-list(a=1:5,b=rnorm(10),c=rnorm(50,1),d=rnorm(100,5))
+lapply(x,mean)
+```
+
+# Funciones especiales: `lapply()`
+* `lapply()` y sus derivados (`sapply()`,`tapply()`) pueden usar "funciones anónimas": funciones no se definen por fuera.
+```{r, highlight=TRUE, prompt=TRUE, strip.white=FALSE, collapse=TRUE, tidy=TRUE}
+x<-list(a=matrix(1:4,2,2),b=matrix(1:6,3,2))
+x
+```
+
+# Funciones especiales: `lapply()`
+* Una función anónima para extraer la primera columna de cada matriz en la lista
+```{r, highlight=TRUE, prompt=TRUE, strip.white=FALSE, collapse=TRUE, tidy=TRUE}
+lapply(x, function(x) x[,1])
+```
+
+# Distribuciones de probabilidad básicas
+* Veamos algunas operaciones asociadas a distribuciones de probabilidad. Vamos a ver algunas dado que hay una gran cantidad de distribuciones en R.
+ > Para ver qué distribuciones hay disponibles se puede usar el siguiente comando (`help.search("distribution")`)
+* Daremos algunos comandos básicos asociados a la distribución normal y binomial pero el resto de las distribuciones tienen comando similares.
+* Para cada distribución hay cuatro comandos asociados a cuatro funciones diferentes:
+	+ `d`: devuelve la altura de la función de densidad
+	+ `p`: devuelve la función de probabilidad acumulada
+	+ `q`: devuelve la inversa función de probabilidad  -quantiles-
+	+ `r`: devuelve números aleatorios generados de una la distribución
+
+# Distribuciones de probabilidad: Normal
+* Asume valores entre $-\infty$ y $+\infty$
+* Su función de densisdad es 
+	+ $f(x)=\frac{1}{\sigma\sqrt{2\pi}}e^{\frac{-(x_{i}-\mu)^2}{2\sigma^2}}$
+* Tiene dos parámetros: $\mu$ -la media- y $\sigma$ -el desvío estándar-
+* Cuando una variable aleatoria se distribuye normalmente se escribe $X \sim N(\mu,\sigma)$
+
+
+# Distribuciones de probabilidad: Normal
+* `dnorm()`: dado un set de valores devuelve la función de densidad
+	+ `x`: el valor a evaluar
+	+ `mean`: la media de la distribución
+	+ `sd`: el desvío std. de la distribución
+	+ `log.p`: si `FALSE` las probabilidades se devuelven como $log(p)$
+```{r, highlight=TRUE, prompt=TRUE, strip.white=FALSE, collapse=TRUE, tidy=TRUE}
+dnorm(0)
+dnorm(0, mean=23, sd=10)
+vals <- c(0,1,2)
+dnorm(vals, mean=23, sd=10)
+```
+
+# Distribuciones de probabilidad: Normal
+* `pnorm()`: dado un set de valores devuelve la probabilidad acumulada, es decir, la probabilidad de obtener ese valor o menor
+	+ `q`: el valor a evaluar
+	+ `mean`: la media de la distribución
+	+ `sd`: el desvío std. de la distribución
+	+ `log.p`: si `FALSE` las probabilidades se devuelven como $log(p)$
+```{r, highlight=TRUE, prompt=TRUE, strip.white=FALSE, collapse=TRUE, tidy=TRUE}
+pnorm(0)
+pnorm(1)
+vals <- c(-2,-1,0,1,2)
+pnorm(vals)
+```
+
+# Distribuciones de probabilidad: Normal
+* `qnorm()`: Es la inversa de `pnorm()`. La idea es darle una probabilidad y que devuelva el valor que acumula hasta allí. 
+	+ `p`: el valor a evaluar
+	+ `mean`: la media de la distribución
+	+ `sd`: el desvío std. de la distribución
+	+ `log.p`: si `FALSE` las probabilidades se devuelven como $log(p)$
+```{r, highlight=TRUE, prompt=TRUE, strip.white=FALSE, collapse=TRUE, tidy=TRUE}
+qnorm(0.025)
+qnorm(0.5)
+qnorm(0.975)
+```
+
+# Distribuciones de probabilidad: Normal
+* `rnorm()`: arroja números aleatorios de una distribución normal con los parámetros especificados. 
+	+ `n`: cantidad de números aleatorios a devolver
+	+ `mean`: la media de la distribución
+	+ `sd`: el desvío std. de la distribución
+	+ `log.p`: si `FALSE` las probabilidades se devuelven como $log(p)$
+```{r, highlight=TRUE, prompt=TRUE, strip.white=FALSE, collapse=TRUE, tidy=TRUE}
+rnorm(10,0,1)
+d <- rnorm(10000, 13,4)
+mean(d)
+sd(d)
+```
+
+# Distribuciones de probabilidad: Normal
+```{r, highlight=TRUE, prompt=TRUE, strip.white=FALSE, collapse=TRUE, tidy=TRUE,  fig1, out.width = '75%', fig.align = "center"}
+d <- rnorm(10000, 13,4)
+hist(d, main="")
+```
+
+# Distribuciones de probabilidad: Binomial
+* Imaginemos un experimento (de Bernoulli) con dos resultados posibles (1=éxito y 0=fracaso) y la probabilidad de éxito es $P(X=1)=p$ y la de fracaso es $P(X=0)=1-p$
+* Repetimos el experimento $n$ veces y lo que queremos modelar es la cantidad de éxitos ($x$) en las $n$ tiradas.
+* La función de densidad de una distribución binomial es:
+	+ $f(x)=\binom{n}{x}p^x(1-p)^{(n-x)}$ donde $x=0,1,2,...,n$
+* `dbinom()`: dado un set de valores devuelve la función de densidad
+	+ `x`: el valor a evaluar
+	+ `size`: cantidad de pruebas, o sea, el $n$
+	+ `prob`: probabilidad de éxito, o sea, $p$
+	+ `log.p`: si `FALSE` las probabilidades se devuelven como $log(p)$
+
+# Distribuciones de probabilidad: Binomial
+```{r, highlight=TRUE, prompt=TRUE, strip.white=FALSE, collapse=TRUE, tidy=TRUE, fig2, out.width = '75%', fig.align = "center"}
+x <- seq(0,50,by=1)
+y <- dbinom(x,size=50,prob=0.5)
+plot(x, y)
+```
+
+# Distribuciones de probabilidad: Binomial
+* `pbinom()`: dado un set de valores devuelve la probabilidad acumulada, es decir, la probabilidad de obtener ese valor o menor
+	+ `q`: el valor a evaluar
+	+ `size`: cantidad de pruebas, o sea, el $n$
+	+ `prob`: probabilidad de éxito, o sea, $p$
+	+ `log.p`: si `FALSE` las probabilidades se devuelven como $log(p)$
+```{r, highlight=TRUE, prompt=TRUE, strip.white=FALSE, collapse=TRUE, tidy=TRUE}
+pbinom(25,size=50,prob=0.5)
+pbinom(25,size=50,prob=0.25)
+pbinom(25,size=50,prob=0.10)
+pbinom(25,size=50,prob=0.05)
+```
+
+
+# Distribuciones de probabilidad: Binomial
+* `qbinom()`: Es la inversa de `pbinom()`. La idea es darle una probabilidad y que devuelva el valor que acumula hasta allí. 
+	+ `p`: el valor a evaluar
+	+ `size`: cantidad de pruebas, o sea, el $n$
+	+ `prob`: probabilidad de éxito, o sea, $p$
+	+ `log.p`: si `FALSE` las probabilidades se devuelven como $log(p)$
+```{r, highlight=TRUE, prompt=TRUE, strip.white=FALSE, collapse=TRUE, tidy=TRUE}
+qbinom(0.5,51,1/2)
+qbinom(0.25,51,1/2)
+```
+
+# Distribuciones de probabilidad: Binomial
+* `rbinom()`: arroja números aleatorios de una distribución binomial con los parámetros especificados. 
+	+ `n`: cantidad de números aleatorios a devolver
+	+ `size`: cantidad de pruebas, o sea, el $n$
+	+ `sd`: el desvío std. de la distribución
+	+ `log.p`: si `FALSE` las probabilidades se devuelven como $log(p)$
+```{r, highlight=TRUE, prompt=TRUE, strip.white=FALSE, collapse=TRUE, tidy=TRUE}
+rbinom(5,size=100,prob=0.2)
+rbinom(5,size=100,prob=0.7)
+```
+
+# Estadística descriptiva: ``median()``
+* Ya vimos algunas funciones para calcular estadísticos descriptivos en r
+	+ ``mean()``
+	+ ``median()``
+	+ ``var()``
+	+ ``sd()``
+	+ ``summary()``
+	+ ``table()``
+
+
+# Estadística descriptiva:  
+* Algunas otras funciones útiles son ``quantile()``,``summary()``
+
+```{r, highlight=TRUE, prompt=TRUE, strip.white=FALSE, collapse=TRUE, tidy=TRUE}
+x<-rnorm(1000,0,1)
+quantile(x,prob=c(0.25,0.5,0.75))
+summary(x)
+```
+

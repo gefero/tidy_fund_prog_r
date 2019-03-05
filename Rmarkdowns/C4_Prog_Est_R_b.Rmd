@@ -1,0 +1,121 @@
+---
+title: "Fundamentos de la programación estadística y Data Mining en R"
+author: "Dr. Germán Rosati (Digital House - UNTREF - UNSAM)"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+subtitle: "Unidad 3. Regresión logística y árboles de decisión en R"
+output: slidy_presentation
+---
+
+# Implementación de una regresión logística en R
+* Para variables dependientes binarias o categóricas el modelo lineal no suele ser recomentable
+* La línea de regresión puede tomar valores negativos o mayores a 1
+* Solución: usar una función logística
+* En lugar de intentar predecir $E(Y|X)$ intentaremos predecir $P(Y=1|X)$
+* El modelo será: $P(Y=1|X)=\frac{e^\beta_{0}+\beta_{1}X}{1+e^\beta_{0}+\beta_{1}X}$
+
+# Implementación de una regresión logística en R: `glm()`
+* Para eso usaremos la función `glm()` que sirve para ajustar una gran familia de modelos llamada "Modelos Lineales Generalizados" de los cuales la regresión logística es uno de ellos.
+* La sintaxis de `glm()` es muy similar a la de `lm()` con la única diferencia de que debemos pasar un argumento ``family=binomial` para decirle a `R` que queremos correr una regresión logística en lugar de algún otro GLM.
+* Carguemos los datos y hagamos algunos gráficos para refrescar conceptos vistos en la clase pasada.
+
+# Gráficos de dispersión
+```{r, tidy=TRUE}
+setwd("/media/grosati/Elements/PEN/KINGSTON/PEN2/Cursos/REPO_Curso_Fund_Prog_R/Data/")
+default<-read.csv("default.csv")
+plot(default$balance,default$income
+      , col=c("lightblue","green")[default$default]
+      , main = "Gráfico de disp. de Ingresos por balance")
+```
+
+# Gráficos Boxplot
+```{r, echo=TRUE, tidy=TRUE}
+par(mfrow=c(1,2))
+boxplot(default$balance~default$default
+	, col=c("lightblue","green")
+	, xlab="Default"
+	, ylab="Balance")
+boxplot(default$income~default$default
+	,col=c("lightblue","green")
+	, xlab="Default"
+	, ylab="Ingresos")
+```
+
+# Implementación de una regresión logística en R: `glm()`
+```{r, collapse=TRUE, highlight=TRUE, prompt=FALSE, strip.white=FALSE, tidy=FALSE}
+glm_fit<-glm(default~.
+	     ,data=default
+	     ,family = binomial)
+summary(glm_fit)
+```
+* Pareciera, entonces, que el `balance` y la condición de `student` son las variables que más influyen en la probabilidad de no pagar un crédito.
+* Al igual que en `lm()` podemos usar la función `coef()`
+```{r, collapse=TRUE, highlight=TRUE, prompt=FALSE, strip.white=FALSE, tidy=FALSE}
+coef(glm_fit)
+```
+
+# Implementación de una regresión logística en R: `predict()` 
+* La función `predict()` puede ser usada para generar predicciones acerca de la variable dependiente. Debemos usar el argumento ``type=response` para decirle a `R` que genere las probabilidades de que $P(Y=1|X)$ en lugar de otra información (como por ejemplo el logit)	
+* Sabemos que esas son las probabilidades de que una persona dada no pague su crédito por la funcion `contrasts()
+```{r, collapse=TRUE, highlight=TRUE, prompt=FALSE, strip.white=FALSE, tidy=FALSE}
+glm_probs<-predict(glm_fit ,type="response")
+contrasts(default$default)
+```
+
+# Implementación de una regresión logística en R: generando predicciones
+```{r, collapse=TRUE, highlight=TRUE, prompt=FALSE, strip.white=FALSE, tidy=FALSE}
+glm_pred<-rep("No", 1033)
+glm_pred[glm_probs>0.5]<-"Yes"
+table(glm_pred,default$default)
+(645+265)/1033
+mean(glm_pred==default$default)
+```
+* La primera línea genera 1033 observaciones con el valor `No` por defecto.
+* La segunda transforma en `Sí` a aquellas observaciones cuya `glm_probs > 0.5`	
+* Una vez armadas las predicciones podemos usar `table()` para generar una matriz de confusión de modelo.
+* Y calculando la media de las observaciones que en `glm_pred` son iguales a las de `default$default` (la variable dependiente original), tenemos una medida del error de clasificación del modelo.
+
+# Implementación de una regresión logística en R: training error y test error
+* A primera vista, el modelo parece funcionar divinamente... 88% de las observaciones son clasificadas bien. Pero hay un problema: la enorme mayoría de las observaciones no generaron un cese de pagos... Por lo cual, solamente observando eso el modelo aporta poca información... usando como modelo esa proporción estaríamos bien.
+* Hemos estimado el error sobre TODOS nuestros datos.
+* Lo cual nos lleva a plantearnos el problema del "Test-Error" y el "Training-Error"
+
+(...)
+
+# Implementación de una regresión logística en R: training error y test error -volviendo-
+* Entonces, ¿cómo lo implementamos en R?
+```{r, collapse=TRUE, highlight=TRUE, prompt=FALSE, strip.white=FALSE, tidy=FALSE}
+set.seed(7)
+train<-sample(x = 1:nrow(default)
+	      , size = 600
+	      , replace = FALSE)
+glm_fit<-glm(default~.
+	     , data = default
+             , subset = train
+	     , family = binomial)
+```
+* La lógica es generar 600 números aleatorios sin reposición con la función `sample()` que varíen entre 1 y el total de filas del dataset `default`.
+* Luego, usamos ese vector como un índice de posición para poder hacer subsetting de `default`.
+* En tercer lugar, estimamos el mismo modelo de regresión logística pero pasando como argumento `subset = train`. 
+
+# Implementación de una regresión logística en R: training error y test error -volviendo-
+* También podríamos haberlo hecho de esta forma:
+```{r, eval=FALSE, collapse=TRUE, highlight=TRUE, include=FALSE, prompt=FALSE, strip.white=FALSE, tidy=FALSE}
+glm_fit<-glm(default~.
+	     , data = default[train,]
+             , family = binomial)
+```
+* Luego, nos queda realizar la predicción sobre el test set.
+```{r, collapse=TRUE, highlight=TRUE, prompt=FALSE, strip.white=FALSE, tidy=FALSE}
+glm_probs<-predict(glm_fit 
+		   , newdata = default[-train,]
+		   , type ="response")
+glm_pred<-rep("No",433)
+glm_pred[glm_probs>0.5]="Yes"
+table(glm_pred, default$default[-train])
+
+mean(glm_pred==default$default[-train])
+```
+
+# Implementación de una regresión logística en R: training error y test error -volviendo-
+* Básicamente, replicamos el mismo procedimiento que al principio, solamente que para el uso del `predict()` en el argumento `data = default[-train,]` negamos el vector `train`. 
+* ¿Qué pasa con el test error? Es más alto... No tanto... pero es para tener en cuenta.

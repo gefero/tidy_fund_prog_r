@@ -1,0 +1,170 @@
+---
+title: "Fundamentos de la programación estadística y Data Mining en R"
+subtitle: "Unidad 1. Visualización básica de datos en R"
+output: beamer_presentation
+colortheme: orchid
+fig_caption: TRUE
+fonttheme: professionalfonts
+highlight: tango
+#theme: Darmstadt
+theme: Boadilla
+toc: FALSE
+author: "Dr. Germán Rosati (Digital House - UNSAM - UNTREF)"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+---
+
+# Visualizaciones básicas de datos en R
+* Existen muchos comandos para hacer visualizaciones en R. Vamos avanzar sobre el paquete de gráficos "base" del lenguaje. Hay otras herramientas muy poderosas para generar gráficos en R, como por ejemplo el paquete ``ggplot2`` (http://ggplot2.org/)
+* La función básica para generar gráficos en R es ``plot``.
+```{r, highlight=TRUE, prompt=TRUE, strip.white=FALSE, collapse=TRUE, tidy=TRUE}
+str(plot)
+```
+* Dos argumentos importantes:
+    * ``x``: vector que va en el eje x
+    * ``y``: vector que va en el eje y
+
+# Visualizaciones básicas de datos en R
+* Luego, hay otros parámetros opcionales para setear el gráico:
+    * ``type``: el tipo de gráfico
+    * ``main``: título para el gráfico
+    * ``xlab``, `yxlab``: títulos para eje X e Y
+    * ``x``: la variable a plotear
+    * ``breaks``: cantidad de intervalos a plotear
+    * ... muchos otros
+
+# Visualizaciones básicas de datos en R
+```{r, echo=TRUE, eval=FALSE}
+plot(cars$speed,cars$dist
+     ,main="Velocidad por dist. recorrida"
+     ,xlab="Velocidad",ylab="Distancia")
+```
+
+# Visualizaciones básicas de datos en R
+```{r, echo=FALSE, fig3, fig.width=4, fig.height=2.5, fig.align = "center"}
+plot(cars$speed,cars$dist
+     ,main="Velocidad por dist. recorrida"
+     ,xlab="Velocidad",ylab="Distancia")
+```
+
+# Visualizaciones básicas de datos en R: ``hist``
+```{r, echo=TRUE, eval=FALSE}
+x<-rnorm(1000,0,1)
+par(mfrow=c(1,2))
+hist(x)
+hist(x,breaks=1000)
+```
+
+# Visualizaciones básicas de datos en R: ``hist``
+```{r, echo=FALSE, fig.width=6, fig.height=2.5}
+x<-rnorm(1000,0,1)
+par(mfrow=c(1,2))
+hist(x)
+hist(x,breaks=1000)
+```
+
+
+# Visualizaciones básicas de datos en R: ``boxplot``
+```{r, fig.width=4, fig.height=3.3, fig.align='center'}
+boxplot(mtcars$mpg, main='Car Mileage Data',xlab='MPG')
+```
+
+# Visualizaciones básicas de datos en R: ``boxplot``
+* Se puede generar un boxplot de `mpg` para cada categoría de la variable (cualitativa) `cyl` y variar los colores. 
+* Ver `mpg~cyl` y `col=c("red","green","yellow")`
+```{r, echo=TRUE, eval=FALSE}
+boxplot(mpg~cyl,data=mtcars, main="Datos de consumo de los autos"
+	, xlab="No. cilindros", ylab="Millas por galón"
+	, col=c("red","green","yellow"))
+```
+
+
+# Visualizaciones básicas de datos en R: ``boxplot``
+```{r, echo=FALSE, fig.width=4, fig.height=3.2, fig.align='center'}
+boxplot(mpg~cyl,data=mtcars, main="Datos de consumo de los autos"
+	, xlab="No. cilindros", ylab="Millas por galón"
+	, col=c("red","green","yellow"))
+```
+
+# Visualizaciones básicas de datos en R: ``boxplot``
+* ``x``: la variable a plotear
+* ``formula``: si se desea hacer un boxplot para cada categoría de otra variable
+* ``data``: el dataframe a plotear
+* ... muchos otros
+
+# Visualizaciones básicas de datos en R: ``barplot``
+* Para generar gráficos de barras, puede usarse la función `barplot`. 
+* La misma requiere como input una tabla de frecuencias de valores (a diferencia del caso de histogramas que toma el vector de distribución de la función).
+```{r, echo=TRUE, eval=FALSE}
+counts <- table(mtcars$gear)
+barplot(counts, main="Distribución de autos", 
+  	xlab="Número de cambios")
+```
+
+# Visualizaciones básicas de datos en R: ``barplot``
+```{r, echo=FALSE, fig.width=4, fig.height=3, fig.align='center'}
+counts <- table(mtcars$gear)
+barplot(counts, main="Distribución de autos", 
+  	xlab="Número de cambios")
+```
+
+# Visualizaciones básicas de datos en R: ``barplot``
+* También se pueden realizar barplots apilados. Para ello, generamos una tabla de contingencia con dos variables (`mtcars$vs` cruzada por `mtcars$gear`) y la usamos como input al gráfico.
+* Luego generamos 
+    * dos colores diferentes `col=c("darkblue","red")`
+    * una legenda con los nombres de las categorías `legend = rownames(counts)`
+```{r, echo=TRUE, eval=FALSE}
+counts <- table(mtcars$vs, mtcars$gear)
+barplot(counts, main="Autos por cantidad de cambios y VS",
+  xlab="Número de cambios", col=c("darkblue","red"),
+ 	legend = rownames(counts))
+```
+
+# Visualizaciones básicas de datos en R: ``barplot``
+```{r,  echo=FALSE, fig.width=4, fig.height=3, fig.align='center'}
+counts <- table(mtcars$vs, mtcars$gear)
+barplot(counts, main="Autos por cantidad de cambios y VS",
+  xlab="Número de cambios", col=c("darkblue","red"),
+ 	legend = rownames(counts))
+```
+
+# Visualizaciones básicas de datos en R: ``barplot``
+```{r}
+str(barplot)
+```
+
+* `heigth`: vector o matriz
+    * Si es vector, determina la altura de la matriz
+    * Si es una matriz y `besides=FALSE` cada barra del plot  corresponde a una columna con los valores "apilados"
+    * Si es una matriz y `besides=TRUE` cada barra del plot corresponde a una columna con los valores "yuxtapuestos".
+
+# Visualizaciones básicas de datos en R: scatterplots
+* Muchas formas de hacer un scatter plot en R.
+* La más simple: con `plot()`
+    * `x`: variable en eje X
+    * `y`: variable en eje Y
+
+# Visualizaciones básicas de datos en R: scatterplots
+```{r, fig.width=3.4, fig.height=3, fig.align='center'}
+plot(mtcars$wt, mtcars$mpg, main="Ejemplo scatterplot", 
+  	xlab="Peso del auto", ylab="Millas por galón")
+```
+
+# Visualizaciones básicas de datos en R: scatterplots
+* Finalmente, podemos agregar líneas de tendencia al scatter.
+* Generamos dos:
+    * una basada en regresión lineal: `abline(lm(mtcars$mpg~mtcars$wt), col="red")`
+    * otra basada en una regresión no lineal `lines(lowess(mtcars$wt,mtcars$mpg), col="blue")`  
+```{r, echo=TRUE, eval=FALSE}
+plot(mtcars$wt, mtcars$mpg, main="Ejemplo scatterplot", 
+  	xlab="Peso del auto", ylab="Millas por galón")
+abline(lm(mtcars$mpg~mtcars$wt), col="red") 
+lines(lowess(mtcars$wt,mtcars$mpg), col="blue")
+```
+
+# Visualizaciones básicas de datos en R: scatterplots
+```{r, echo=FALSE, fig.width=3.4, fig.height=3, fig.align='center'}
+plot(mtcars$wt, mtcars$mpg, main="Ejemplo scatterplot", 
+  	xlab="Peso del auto", ylab="Millas por galón")
+abline(lm(mtcars$mpg~mtcars$wt), col="red") 
+lines(lowess(mtcars$wt,mtcars$mpg), col="blue")
+```

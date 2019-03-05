@@ -1,0 +1,594 @@
+---
+title: "Introducción al `tidyverse` con datos geográficos"
+author: "Dr. Germán Rosati"
+output: html_notebook
+---
+
+
+```{r include=FALSE}
+knitr::opts_chunk$set(message=FALSE, warning=TRUE, highlight=TRUE)
+```
+
+## Introducción
+La idea de esta notebook es poder introducir algunos conceptos básicos del llamado `tidyverse` en R. Vamos a tratar de hacernos amigos de algunos algunos de los verbos que vimos hace un rato y que nos van a hacer la vida más fácil en la manipulación de datos.
+
+### Objetivos
+
+* Brindar nociones sobre la lógica general del `tidyverse` para el preprocesamiento de datos
+* Introducir algunas funciones básicas para el filtrado, trasformación y merge de datos
+* Presentar herramientas para la visualización de datos
+
+
+## PASO 1. Cargar las librerías a utilizar
+
+Lo primero que tenemos que hacer, siempre, en una sesión de R es cargar o importar las librerías que vamos a utilizar.
+
+```{r, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(sf)
+library(gdalUtils)
+```
+
+
+
+## PASO 2. Importando los datos
+
+El (obvio) siguiente paso es importar los datos que vamos a utilizar. En este caso, vamos a tratar de hacer un análisis exploratorio de un dataset sobre la distribución de delitos en la Ciudad Autónoma de Buenos Aires. Se trata de un dataset no oficial generado por el dueño de este  [repositorio](https://github.com/ramadis/delitos-caba). Si bien son datos "no oficiales" están extraidos de una fuente oficial: el [Mapa del Delito](https://mapa.seguridadciudad.gob.ar/) generado por el GCBA.
+
+Primero, importamos el gran archivo en formato .csv que contiene en cada fila un delito reportado y una serie de atributos asociados.
+
+```{r}
+delitos <- read.csv("../data/delitos.csv")
+head(delitos)
+```
+
+
+Hagamos un primer gráfico rápido de este dataset a ver qué encontramos... Lo más fácil de todo sería plotear la latitud contra la longitud.
+
+```{r}
+ggplot(delitos) + 
+        geom_point(aes(x=longitud, y=latitud))
+```
+
+
+Ya vemos que hay algo raro... hay un puntito solitario en `(lat=0, long=0)`. Podemos eliminarlo, entonces.
+
+```{r}
+delitos_limpios <- filter(delitos, latitud!=0 | longitud!=0)
+head(delitos_limpios)
+```
+
+
+Bien... ya hicimos una primera limpieza de los datos.
+
+```{r}
+ggplot(delitos_limpios) + 
+        geom_point(aes(x=longitud, y=latitud))
+```
+
+
+
+*** 
+#### ¿Qué pasó acá?
+Acabamos de introducir una buena cantidad de código que conviene empezar a revisar para ir fijando conceptos.
+
+##### Gráficos
+
+Acabamos de hacer una visualización bien rápida. Teníamos una varaiable que medía la posición en el eje $X$ (o sea la `longitud`) y otra que lo hacía en el eje $Y$ (`latutud`). Hicimos un scatterplot de eso, usando la librería `ggplot2`. Hay dos pasos básicos para hacer un gráfico en ggplot:
+
+1. `ggplot(delitos) + ` $=>$ Creamos el objeto `ggplot` y lo "llenamos" con un dataset. En este caso, una `tibble`
+2. `geom_point(aes(x=longitud, y=latitud))` $=>$ agregamos una capa estética, en este caso de puntos.
+
+Vamos a volver, pero en general, todos los gráficos de `ggplot2` se construyen acumulando capas estéticas.
+
+##### Filtros
+
+Encontramos ¿una? inconsistencia en la base de datos. Básicamente, uno o varios registros con coordenadas `latitud==0 & longitud==0`. Entonces, usamos la instrucción `filter()` para filtrar los casos que cumplían con esa condicion.
+
+*** 
+
+
+
+## PASO 3. Visualizando los datos 
+
+Ya vimos un scatterplot, muy útil para plotear la distribución conjunta de dos variables cuantitativas. Sigamos con nuestro ejemplo y veamos algunos parámetros para modificar la estética del plot (que vale para cualquier `geom_XXX`).
+
+
+### Tamaño, color y forma (y una proyección)
+
+Pongamos un color más bonito que ese negro. Y aprovechemos para hacer una aclaración. Estrictamente, estamos trabajando con variables de coordenadas geográficas. No tenemos tiempo en el curso para trabajar en detalle este tema pero digamos que son variables cuantitativas "especiales". Cada mapa está dibujado según un sistema de coordenadas que llevan la forma "geódica" de la tierra (básicamente, algo que está en 3 dimensiones) a un plano (en 2 dimensiones).
+
+Es decir que "deforman" la forma de la tierra para llevarla a la hoja de papel (o a la pantalla, en este caso). Si se fijan, la CABA aparece medio alargada en el mapa anterior. Esto es porque no le especificamos a `ggplot`en qué sistema de coordenadas está. 
+
+Pasemos, entonces la capa `coord_map('mercator')`
+
+
+*** 
+Para más detalles sobre sistemas de coordenadas y referencia pueden consultar [Ciencia de Datos para Gente Sociable](https://bitsandbricks.github.io/ciencia_de_datos_gente_sociable/) de Antonio Vázquez Brust, material (y autor) que dieron una mano grande a este curso -además de ser colega y amigo-.
+
+*** 
+
+
+```{r}
+ggplot(delitos_limpios) + 
+        geom_point(aes(x=longitud, y=latitud), color='blue') +
+        coord_map("mercator")
+```
+
+
+Ahora se parece más al Buenos Aires de Gardel...
+
+Bien, cambiemos el tamaño de los puntitos. El parámetro `size` está en pixels, por lo cual no es fácil estimarlo sin ver una versión previa del plot, primero.
+
+```{r}
+ggplot(delitos_limpios) + 
+        geom_point(aes(x=longitud, y=latitud), color='red', size=0.05) +
+        coord_map("mercator")
+```
+
+
+Y, por último, cambiemos la forma...
+
+```{r}
+ggplot(delitos_limpios) + 
+        geom_point(aes(x=longitud, y=latitud), color='red', size=0.05, shape=3) +
+        coord_map("mercator")
+```
+
+
+
+### Facetado
+
+Ahora, si queremos agregar más dimensiones al plot... la cosa se hace un poco más densa. Es por eso que podemos usar una nueva "capa" de `ggplot`, llamada *facetado*. La idea es que podemos tener gráficos continguos, condicioados a los valores de una variable (generalmente, categórica). Veamos, entonces, un plot por cada uno de los tipos de delitos...
+
+```{r, fig.height = 5, fig.width = 8}
+ggplot(delitos_limpios) + 
+        geom_point(aes(x=longitud, y=latitud, color=tipo_delito), size=0.05, alpha=0.25) +
+        facet_wrap(~tipo_delito) +
+        coord_map("mercator")
+```
+
+
+*¿Qué diferencias hay con los plots anteriores?*
+
+
+*** 
+#### Consigna 1.
+
+ Generar los siguientes gráficos:
+
+* El gráfico anterior, variando la capa `facet_wrap` por `facet_grid`.
+* El gráfico anterior, sin facetado y con un color por cada tipo de delito.
+
+*** 
+
+
+### Otros plots...
+
+Veamos ahora cuáles son los tipos de delitos más comunes en la CABA.
+
+
+```{r}
+ggplot(delitos_limpios, aes(x=tipo_delito))+
+        geom_bar(stat="count")
+```
+
+
+Se ve bastante bien... aunque tenemos acomodar un poco las etiquetas. Una opción es pedirle a `ggplot` que las abrevie:
+
+
+```{r}
+ggplot(delitos_limpios, aes(x=tipo_delito))+
+        geom_bar(stat="count") + 
+        scale_x_discrete(labels = abbreviate)
+```
+
+
+Otra es pasarle nosotros un vector de etiquetas:
+
+```{r}
+ggplot(delitos_limpios, aes(x=tipo_delito))+
+        geom_bar(stat="count") + 
+        scale_x_discrete(labels = c('H.doloso','H.seg.vial', 'Hurto(s/v)', 
+                                    'Robo(c/v)', 'Robo auto', 'Hurto auto', 'Lesion.seg.vial'))
+```
+
+
+*** 
+#### Consigna 2.
+
+Generar un gráfico de barras por comuna
+
+*** 
+
+
+### Histogramas 
+
+Un histograma, como hemos visto, se usa para mostrar la distribución de una variable continua. Por ejemplo, podríamos hacer un histograma de la distribución de edades de la EPH o de los ingresos. No tenemos una variable cuantitativa, vamos a inventarnos una. Pero previamente vamos a tener que introducir algunas ideas de limpieza de datos...
+
+
+
+## PASO 4. Limpieza de datos
+
+Recordemos:
+
+* cargamos librerías con `library()`
+* cargamos datos con `read_csv()`
+* filtramos datos con `filter()`
+* hicimos algunas visuzalizaciones básicas con `ggplot2`
+
+Ahora la cosa se pone seria. Una de las primeras cosas que vamos a tener que hacer es poder tener una visión más o menos general de la tabla con la que estamos trabajando. Para eso, llamamos a la función `str()` que puede usarse para cualquier clase de objeto en R.
+
+```{r}
+str(delitos_limpios)
+```
+
+
+¿Qué se puede observar en esta salida?
+
+* Es un dataframe con 237.445 observaciones y 14 variables
+* Tenemos nombre, tipo y algunos valores de cada una de las variables
+* Hay varias columnas que son `factors`
+
+Por defecto, R asume que toda columna de texto es un factor. Este último punto puede llegar a traer problemas. Por eso suele ser buena idea setear el argumento `stringsAsFactors=FALSE`: `datos <- read.csv("/ruta/a/misdatos.csv", stringsAsFactors=FALSE)`.
+
+Otro paso útil es llamar a la función `summary()`
+
+
+```{r}
+summary(delitos_limpios)
+```
+
+
+Recordemos... las categorías de un factor en R se llamana "niveles"
+
+* ¿Cuáles de las variabes en este dataset son factors? Veamos los levels de una de ellas...
+
+```{r}
+levels(delitos_limpios$barrio)
+```
+
+
+En principio, esta variable parece estar bien. Sin embargo, existen al menos otras dos variables que no parece tener demasiado sentido que tengan formato de factor: fecha y hora. En efecto, existe un tipo de dato especial en R para datos de tiempo, fecha, hora, etc. Vamos a hacer uso del paquete `lubridate`:
+
+```{r message=FALSE, warning=FALSE}
+library(lubridate)
+
+delitos_limpios <- mutate(delitos_limpios, fecha=ymd(fecha), hora=hms(hora))
+```
+
+Aquí, usamos la instrucción `mutate()` para transformar las dos columnas junto con las funciones `ymd()` por "year / month / day" y 
+
+
+Ahora estamos en condiciones de pensar nuestro histograma. Vamos a contar cuántos hechos delictivos hubo por día y luego generaremos sobre esta nueva tabla el histograma.
+
+```{r}
+p <- group_by(delitos_limpios, fecha) 
+periodo <- summarise(p, gran_total = n())
+
+head(periodo)
+```
+
+
+Ahora, solamente, tenemos que crear a nuestro histograma: 
+
+***
+Hay unas cuántas instrucciones que no vimos y que retomaremos enseguida. No obstante, el código es lo suficientemente expresivo como para poder intuir qué pasó: 
+
+1. tomamos el dataset original
+2. agrupamos por el campo "fecha" (es decir, por día)
+3. hicimos un conteo de cuántos registros había por cada día
+***
+
+
+
+```{r}
+ggplot(periodo) + 
+        geom_histogram(aes(x = gran_total))
+```
+
+Podemos ver que hay un rango grande en la cantidad de delitos por día: 
+
+* hubo días con menos de 100 delitos y días con 500
+* no obstante, la mayor parte de los días parecen conentrarse entre 300 y 400 delitos
+
+
+Podríamos también construir un histograma para cada tipo de delito...
+
+
+```{r}
+p <- group_by(delitos_limpios, fecha, tipo_delito)
+periodo <- summarise(p, gran_total=n())
+
+head(periodo)
+```
+
+
+Ahora, facetando...
+
+```{r}
+ggplot(periodo) + 
+        geom_histogram(aes(x=gran_total)) + 
+        facet_wrap(~tipo_delito)
+```
+
+
+
+
+#### Integrando datos de diferentes fuentes
+
+Ahora bien, en general al utilizar datos "en la vida real" no es habitual tener una sola tabla. Es habitual tener que integrar datos de varias fuentes. Ya trabajaremos con los datos de la [Encuesta Permanente de Hogares del INDEC](https://www.indec.gob.ar/bases-de-datos-eph-buc.asp) y veremos que tenemos, al menos, dos tablas para trabajar: una correspondiente a los datos de los individuos encuestados y otra correspondiente a los de los hogares en que habitan esos individuos.
+
+Ahora... supongamos que tenemos una nueva fuente de datos: los reclamos del Sistema de Atención Ciudadana correspondientes a los años 2016 (uno de los años que abarca el dataset de delitos):
+
+```{r}
+table(year(delitos_limpios$fecha))
+```
+
+
+```{r}
+at_ciudadano <- read.csv("../data/sistema-unico-de-atencion-ciudadana-2016.csv", sep=";")
+head(at_ciudadano)
+```
+
+
+Podríamos pensar que en aquellos barrios en los que mayor prevalencia de delitos existe, debería verificarse una mayor cantidad de reclamos por rubros asociados a estos delitos. Observemos previamente la estructura de nuestro dataset e identifiquemos qué variable especifica el rubro de reclamo y veamos los levels correspondientes...
+
+```{r}
+str(at_ciudadano)
+```
+
+
+Haciendo una inspección rápida, puede verse que 
+
+
+* DENUNCIAS SOBRE INCONDUCTAS REFERIDAS A LA ACTUACION POLICIAL
+* EMERGENCIAS
+* SEGURIDAD
+* SEGURIDAD E HIGIENE
+
+
+son las categorías que podrían estar asociadas a reclamos por inseguridad y hechos delictivos.
+
+
+#### Transformando y vinculando datos: los 5 verbos del `tidyverse`
+
+Ahora bien... ¿cómo vinculamos ambas tablas? El problema es que en ambos casos tenemos registros individuales (delitos en una caso, reclamos en otro). Tenemos, entonces, que agregarlos de alguna forma a una unidad común. En pricipio, hay una columna "BARRIO" en ambas. Eso es una primera posibildiad. Contemos, entonces, la cantidad de delitos (total) por barrio y la cantidad de reclamosen las cuatro categorías anteriores y peguemos ambas tablas juntas. Esto nos va a permitir introducir varias funciones, operadores y comandos sumamente útiles.
+
+Para hacer todo esto, y mucho más, vamos a aprender funciones que representan cinco verbos básicos para la transformación de datos:
+
+* `select()`: seleccionar -elegir- columnas por su nombre
+* `filter()`: filtrar, es decir quedarse sólo con las filas que cumplan cierta condición
+* `arrange()`: ordenar las filas de acuerdo a su contenido o algún otro índice
+* `mutate()`: mutar -cambiar- un dataframe, modificando el contenido de sus columnas o creando columnas (es decir, variables) nuevas
+* `summarise()`: producir sumarios -un valor extraído de muchos, por ejemplo el promedio- con el contenido de las columnas
+
+Estas funciones tienen una sintaxis, una forma de escribirse, uniforme. El primer argumento que toman siempre es un dataframe; los siguientes indican qué hacer con los datos. El resultado siempre es un nuevo dataframe.
+
+Las funciones son parte de `dplyr`, uno de los componentes de la familia de paquetes Tidyverse. Ya tenemos disponible todo lo necesario, activado cuando invocamos `library(tidiverse)` al comienzo.
+
+Empecemos por el dataset `at_ciudadano`. 
+
+1. Lo primero que tenemos que hacer es seleccionar las columnas con las que vamos a trabajar. Para ello, vamos a introducir la función `select()`
+
+```{r,message=FALSE, warning=TRUE}
+at_barrio <- select(at_ciudadano, DOMICILIO_BARRIO, RUBRO)
+head(at_barrio)
+```
+
+
+2. Luego, vamos a filtrar -`filter()`- las categorías que no nos interesan:
+
+```{r}
+at_barrio <- filter(at_barrio, RUBRO == 'DENUNCIAS SOBRE INCONDUCTAS REFERIDAS A LA ACTUACION POLICIAL' | RUBRO == 'EMERGENCIAS' |  RUBRO == 'SEGURIDAD' | RUBRO == 'SEGURIDAD E HIGIENE' | RUBRO == 'VEHICULOS DE FANTASIA')
+```
+
+
+3. Ahora, deberíamos sumar la cantidad de reclamos por barrio -`group_by() + summarise()`:
+
+```{r}
+at_barrio_agg <- group_by(at_barrio, DOMICILIO_BARRIO)
+at_barrio_agg <- summarize(at_barrio_agg, total=n())
+```
+
+
+4. Por último, y como para ser gente prolija, ordenemos en forma descendente los barrios:
+
+```{r}
+at_barrio_agg <- arrange(at_barrio_agg, desc(total))
+head(at_barrio_agg)
+```
+
+
+Entonces, hasta acá vimos tres de los cinco verbos... Nos falta analizar `mutate()`. Sobre eso volveremos enseguida.
+
+
+### Operador pipe `%>%` 
+
+Antes de terminar, vamos a presentar una herramienta más: el operador pipe (pronúnciese “paip”, es el término en inglés que significa “tubo”).
+
+El pipe es un operador: un símbolo que relaciona dos entidades. Dicho en forma más simple, el pipe de R, cuyo símbolo es %>% está en familia con otros operadores más convencionales, como +, - o /. Y al igual que los otros operadores, entrega un resultado en base a los operandos que recibe. Ahora bien… ¿Para qué sirve? En resumidas cuentas, hace que el código necesario para realizar una serie de operaciones de transformación de datos sea mucho más simple de escribir y de interpretar.
+
+Repasemos la secuencia anterior...
+
+1. Seleccionamos las columnas a usar
+2. Filtramos registros
+3. Generamos un resumen
+4. Ordenamos en forma descendente
+
+Pegando todo el código junto... 
+
+```{r}
+at_barrio <- select(at_ciudadano, DOMICILIO_BARRIO, RUBRO)
+
+at_barrio <- filter(at_barrio, RUBRO == 'DENUNCIAS SOBRE INCONDUCTAS REFERIDAS A LA ACTUACION POLICIAL' | RUBRO == 'EMERGENCIAS' |  RUBRO == 'SEGURIDAD' | RUBRO == 'SEGURIDAD E HIGIENE' | RUBRO == 'VEHICULOS DE FANTASIA')
+
+at_barrio_agg <- group_by(at_barrio, DOMICILIO_BARRIO)
+
+at_barrio_agg <- summarize(at_barrio_agg, total=n())
+
+arrange(at_barrio_agg, desc(total))
+```
+
+
+Todo bien, pero el problema es que hemos generado unas cuantas variables (“at_barrio”, “at_barrio_agg”) que no volveremos a usar. Además de ser inútiles una vez obtenido el resultado buscado, estas variables intermedias requieren que las nombremos. Decidir el nombre de estas variables que no nos importan toma tiempo (sobre todo cuando producimos muchas), y nos distrae de lo importante, que es el análisis.
+
+El pipe, %>%, permite encadenar operaciones, conectando el resultado de una como el dato de entrada de la siguiente. La misma secuencia que realizamos antes puede resolverse con pipes, quedando así:
+
+
+```{r}
+at_barrio <- select(at_ciudadano, DOMICILIO_BARRIO, RUBRO) %>%
+        filter(RUBRO == 'DENUNCIAS SOBRE INCONDUCTAS REFERIDAS A LA ACTUACION POLICIAL' | 
+                       RUBRO == 'EMERGENCIAS' |  RUBRO == 'SEGURIDAD' | 
+                       RUBRO == 'SEGURIDAD E HIGIENE' | RUBRO == 'VEHICULOS DE FANTASIA') %>%
+        group_by(DOMICILIO_BARRIO) %>% 
+        summarize(total=n()) %>% 
+        arrange(desc(total))
+
+head(at_barrio)
+```
+
+
+*** 
+#### ¿Qué pasó acá?
+
+* Verbos en `tidyverse`...
+* Operador `%>%` en `magritt`
+
+*** 
+
+
+*** 
+#### Consigna 3. 
+
+Repetir el proceso para generar una tabla de cantidad de delitos por barrio usando el operador pipe...
+
+*** 
+
+```{r}
+delitos_barrio <- select(delitos_limpios, barrio, tipo_delito) %>%
+        group_by(barrio) %>% 
+        summarize(total=n()) %>% 
+        arrange(desc(total))
+
+head(delitos_barrio)
+```
+
+
+El último paso es "unir" las dos tablas. Para eso vamos a usar el operador `left_join`.
+
+```{r}
+barrios <- left_join(delitos_barrio, at_barrio)
+barrios
+```
+
+
+`left_join` usa como clave las columnas que en las dos tablas tengan el mismo nombre. Parece que tenemos un problema: las tablas tienen una sola columna con un nombre en común ("total") y justamente, no es esa la que queremos para joinear ambas variables. La que queremos es la que contiene el barrio, el problema es que se llaman distinto. Solucionemos este problema:
+ 
+
+```{r}
+at_barrio <- at_barrio %>%
+                rename(barrio=DOMICILIO_BARRIO)
+
+barrios <- left_join(delitos_barrio, at_barrio, by='barrio')
+```
+
+
+Funciona mejor, pero vemos todavía que queda unos cuántos barrios que no se han joineado.
+
+```{r}
+filter(barrios, is.na(total.y))
+```
+
+Seguramente, se deba a que se encuentran escritas de forma diferente en ambas tablas. Así que vamos a unificar su escritura... Solo por esta vez, hagámoslo usando solamente el R-base y no el tidyverse...
+
+```{r}
+at_barrio$barrio <- as.character(at_barrio$barrio)
+at_barrio$barrio[at_barrio$barrio=='MONSERRAT'] <- 'MONTSERRAT'
+at_barrio$barrio[at_barrio$barrio=='BOCA'] <- 'LA BOCA'
+at_barrio$barrio[at_barrio$barrio=='VILLA GRAL. MITRE'] <- 'VILLA GRAL MITRE'
+at_barrio$barrio[at_barrio$barrio=='COGHLAN'] <- 'COGHLAND'
+at_barrio$barrio <- as.factor(at_barrio$barrio)
+```
+
+Hacemos el `left_join()`. Aprovechamos para darles un nombre coherente a las variables. Y vemos que quedan aún algunos datos con NA: se trata de barrios que no tienen datos en la tabla de at_barrio. 
+
+```{r}
+barrios <- left_join(delitos_barrio, at_barrio, by='barrio') %>%
+                        rename(n_delitos = total.x, n_reclamos=total.y)
+```
+
+Podríamos filtrarlos fácilmente:
+
+```{r}
+barrios %>%
+        filter(!is.na(n_reclamos))
+```
+
+
+Pero mejor vamos a asigarnles un valor de igual a 0:
+
+```{r}
+barrios <- barrios %>% 
+        mutate(n_reclamos=replace_na(n_reclamos, 0))
+```
+
+
+*** 
+#### Consigna 4. 
+1. Realizar un scatterplot de la cantidad de delitos contra la cantidad de reclamos por seguridad.
+
+*** 
+
+
+```{r}
+ ggplot(barrios, aes(x=n_delitos, y=n_reclamos), color='red') + 
+        geom_point() + 
+        geom_smooth(method = 'lm') +
+         labs(title = "Delitos registrados según contactos al SIUAC vinculados a seguridad",
+         subtitle = "Barrios de la CABA, 2016 - 2017",
+         caption = "Fuente: portal de datos abiertos de la Ciudad - http://data.buenosaires.gob.ar",
+         x = "Cantidad de delitos",
+         y = "Cantidad de contactos")
+```
+
+Vamos a ver dos últimas cuestiones vinculadas a la construcción de gráficos en `ggplot2`.
+
+*Generación de títulos en el gráfico:* siempre es importate poder transmitir de forma clara qué información se encuentra en el mismo. En general, hay varias reglas y formas de hacerlo pero al menos cuatro elemenos tienen que existir:
+
+* Título en el que deben estar expresadas de forma clara las variables que se grafican, el período temporal y el área o región al que corresponde el gráfico.
+* Etiquetas en los ejes
+* Leyendas
+* Fuente de los datos
+        
+Todo puede ser manjeando con la capa `labs`
+
+*Curva de ajuste:* podemos agregar una a los datos del scatter mediante `geom_smooth`. Aquí hay varios parámetros. Veremos dos que son los más importantes.
+
+* `method`: puede asumir varios valores, correspondientes a diferentes métodos para generar la recta de ajuste. El que usamos previamente es `method='lm'` que ajusta una recta mediante un modelo lineal. Existen otros, como `method=loess`. 
+* En el caso de métodos como loess o lowess que usan una ventansd`sd`a de valores locales, el parámetro `span` controla el "ancho" de la ventana
+* `se`: `TRUE`, calcula y despliega el error estándar para cada punto de la curva ajustada.
+
+
+```{r}
+ ggplot(barrios, aes(x=n_delitos, y=n_reclamos), color='red') + 
+        geom_point() + 
+        geom_smooth(method = 'loess', span=0.8, se=FALSE) +
+         labs(title = "Delitos registrados según contactos al SIUAC vinculados a seguridad",
+         subtitle = "Barrios de la CABA, 2016 - 2017",
+         caption = "Fuente: portal de datos abiertos de la Ciudad - http://data.buenosaires.gob.ar",
+         x = "Cantidad de delitos",
+         y = "Cantidad de contactos")
+```
+
+
+```{r}
+ ggplot(barrios, aes(x=n_delitos, y=n_reclamos), color='red') + 
+        geom_point() + 
+        geom_smooth(method = 'loess', span=0.3) +
+         labs(title = "Delitos registrados según contactos al SIUAC vinculados a seguridad",
+         subtitle = "Barrios de la CABA, 2016 - 2017",
+         caption = "Fuente: portal de datos abiertos de la Ciudad - http://data.buenosaires.gob.ar",
+         x = "Cantidad de delitos",
+         y = "Cantidad de contactos")
+```
