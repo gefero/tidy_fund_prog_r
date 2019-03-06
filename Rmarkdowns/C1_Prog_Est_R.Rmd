@@ -1,6 +1,6 @@
 ---
 title: "Fundamentos de la programación estadística y Data Mining en R"
-subtitle: "Unidad 1. Programación Estadística en R"
+subtitle: "Unidad 1. Programación Estadística en R: Introducción a R base"
 output: beamer_presentation
 colortheme: orchid
 fig_caption: TRUE
@@ -9,7 +9,7 @@ highlight: tango
 #theme: Darmstadt
 theme: Boadilla
 toc: FALSE
-author: "Dr. Germán Rosati (Digital House - UNSAM - UNTREF)"
+author: "Dr. Germán Rosati (CONICET - UNSAM - UNTREF)"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 ---
 
@@ -54,7 +54,7 @@ date: "`r format(Sys.time(), '%d %B, %Y')`"
 # Ayuda en R
 *En general, para obtener ayuda hay dos formas
 
-```{r, highlight=TRUE, prompt=TRUE, strip.white=FALSE, collapse=TRUE, echo=TRUE, warning=FALSE}
+```{r echo=TRUE, message=FALSE, warning=FALSE, collapse=TRUE, highlight=TRUE, paged.print=FALSE, prompt=TRUE, strip.white=FALSE}
 help(mean)
 ?mean
 ```
@@ -63,6 +63,92 @@ help(mean)
 1. Línea de comando
 2. Script (similar a una _sintax_ de SPSS o un _.do file_ de STATA)
 * Son básicamente lo mismo. Solamente que en la primera se va ingresando  cada comando de una vez.
+
+
+# Dos formas de trabajar
+![Esquema de RStudio](../Rmarkdowns/imgs/Interfaz_RStudio.jpg)
+
+
+# Uso de comandos
+* En usamos básicamente instrucciones que tipeamos o bien en la consola o bien en un script.
+* Los resultados van a aparecer en la consola
+
+```{r, echo=TRUE, message=FALSE, warning=FALSE, collapse=TRUE, highlight=TRUE, paged.print=FALSE, prompt=TRUE, strip.white=FALSE}
+sqrt(81)
+```
+* `sqrt()` es una función, es decir, una secuencia de código lista para usar.
+        + A su vez, tiene un *parmétro* o *argumento*, los valores que una función espera que el usuario defina
+* Las funciones llevan un nombre y van entre paréntesis
+
+# Uso de comandos
+* Ahora, ¿qué pasa si ingreso esto?
+
+```{r, echo=TRUE, message=FALSE, warning=FALSE, collapse=TRUE, highlight=TRUE, paged.print=FALSE, prompt=TRUE, strip.white=FALSE}
+x <- sqrt(81)
+```
+
+* No se observa ningún resultado porque usamos un operador (una función) `<-`
+* En el código anterior se crea una variable (un objeto) y se le asigna el valor de `sqrt(81)`
+* Cuando pedimos... 
+
+```{r, echo=TRUE, message=FALSE, warning=FALSE, collapse=TRUE, highlight=TRUE, paged.print=FALSE, prompt=TRUE, strip.white=FALSE}
+x
+```
+
+# Uso de comandos
+* Trabajar con variables nos permite almacenar valores para usarlos después
+* Hacen nuestro código más fácil de leer y compartir con otros
+
+
+# Importando Datos en R
+* Varias funciones importantes: 
+	+ `read.table()` y `read.csv()` para leer datos tabulares
+	+ `readLines()` para leer líneas en un archivo de texto
+	+ `read.spss()` en el paquete *foreign* que unifica muchas las funciones de importación exportación
+
+# Importando Datos en R: `read.table()`
+* De las más usadas. El formato es similar al resto
+	+ `file`: string con el nombre y la ruta del archivo a importar
+	+ `header`: logical indicado si el archivo tiene cabeceras
+	+ `sep`: string que indica cómo se separan las columnas
+	+ `colClasses`: character vector que indica la clase de cada columna ("character","integer",etc.)
+	+ `nrows`: cantidad de filas en el dataset
+	+ `skip`: cantidad de filas que hay que saltear contando desde el principio en el dataset
+	+ `stringAsFactors`: logical que indica si al importar el archivo deben codificarse los strings como factors
+
+# Importando Datos en R: `read.table()`
+* Si el archivo no es muy grande puede usarse directamente:
+```{r, highlight=TRUE, prompt=TRUE, strip.white=FALSE, collapse=TRUE, tidy=TRUE,eval=FALSE}
+data<-read.table("prueba.txt")
+```
+* R va a realizar algunas tareas automáticamente:
+	+ saltear las líneas que empiezan con #
+	+ calcular cuántas filas hay y cuánta memoria necesita reservar
+	+ identificar la clase de cada columna (si uno lo define con los argumentos resulta más eficiente)
+	+ `read.csv()` es idéntico a `read.table()` con la diferencia de que el sperador es la coma.
+
+
+# Importando Datos "grandes" en R: `read.table()`
+* Si se enfrentan con un dataset grandes pueden
+	+ consultar la documentación de la función
+	+ Setear el argumento `colClasses`: suele ser mucho más rápido dado que R no tiene que realizar la tarea de detectar los tipos de cada columna. 
+	+ Setar `nrows` esto ayuda a usar menos memoria... no a que sea necesariamente más rápido.
+```{r, highlight=TRUE, prompt=TRUE, strip.white=FALSE, collapse=TRUE, tidy=TRUE,eval=FALSE}
+init<-read.table("prueba.txt",nrows=100)
+classes<-sapply(init,class)
+todos<-read.table("prueba.txt"
+		  ,colClasses = classes)
+```	
+# Importando Datos "grandes" en R: `read.table()`
+* Además de todo esto es importante hacer una estimación gruesa de la memoria que va a requerir cargar el dataset.
+* Si la memoria requerida es más de la dispnible en el el sistema... 
+* Cálculo grueso: supongamos un dataframe con 2.000.000 de filas y 200 columnas todos datos numéricos
+	+ 2.000.000 x 200 x 8 bytes/numerics
+	+ 2.400.000.000 bytes
+	+ 2.400.000.000 bytes / 2^20 bytes/MB
+	+ 2.288,8 MB
+	+ 2.24 GB
+
 
 # Objetos en R
 * Básicamente... donde R guarda los datos.
@@ -76,39 +162,11 @@ help(mean)
 	+ `complex`
 	+ `logical`
 
-# Objetos en R
-* Cada objeto en R tiene atributos
-	+ nombres, nombres de dimenesiones
-	+ dimensiones (RxC)
-	+ clase
-	+ largo
-	+ etc.
-
-En general se accede a los atributos de un objeto con la función `attributes()`
-
 # Objetos en R: Vectores
 * El objeto más básico es un vector
 * Un vector solo puede constener objetos de la misma clase
 * Excepción: listas, tipo especial de vector.
 * Pueden crearse vectores vacíos con la función `vector()`
-
-# Generado vectores
-* Para ingresar datos se usa el signo `<-`
-* Para comentar se usa `#`. Todo lo que está a la derecha de `#` es ignorado.
-
-```{r, highlight=TRUE, prompt=TRUE, strip.white=FALSE, collapse=TRUE}
-x<-1 
-# PRUEBA
-x
-```
-
-# Generado vectores
-* Cuando una expresión completa se ingresa puede imprimirse o no el resultado dependiendo de la expresión
-```{r, highlight=TRUE, prompt=TRUE, strip.white=FALSE, collapse=TRUE, tidy=TRUE}
-x<-1     # NO SE IMRPRIME NADA
-x        # SE IMPRIME AUTOMATICAMENTE EL CONTENIDO DE x
-print(x) # SE PIDE LA IMPRESION EXPLICITAMENTE
-```
 
 # Generado vectores
 - El operador `:` sirve para generar secuencias de enteros
@@ -150,35 +208,6 @@ as.logical(x)
 as.character(x)
 ```
 
-# Objetos en R: Matrices
-* Las matrices son vectores en con un atributo _dimensión_
-* Las podemos considerar vectores de dos dimensiones (filas y columnas)
-* Se construyen en el sentido de las columnas
-```{r, highlight=TRUE, prompt=TRUE, strip.white=FALSE, collapse=TRUE, tidy=TRUE}
-m<-matrix(1:6,ncol=2,nrow=3)
-m
-```
-
-# Objetos en R: Matrices
-* Puedo crear matrices de muchas formas: una útil es concatenado por filas o columnas vectores ya existentes con las funciones `rbind()` y `cbind()`
-```{r, highlight=TRUE, prompt=TRUE, strip.white=FALSE, collapse=TRUE, tidy=TRUE, echo=TRUE}
-x<-1:3
-y<-4:6
-cbind(x,y)
-rbind(x,y)
-```
-	
-# Objetos en R: Listas
-* Las listas son una clase especial de vector: pueden contener elementos de cualqueir tipo en su interior.
-* Son objetos muy importantes en R: la mayoría de los resultados de los modelos que se aplican en R devuelven como output un objeto que es una lista.
-* Otro ejemplo: al importar datos de un GIS (.shp, .geojson, geodatabase, etc.) R los interpreta como una lista.
-
-# Objetos en R: Listas
-```{r, highlight=TRUE, prompt=TRUE, strip.white=FALSE, collapse=TRUE, tidy=TRUE, echo=TRUE}
-x<-list(1,"a",TRUE, 4.6)
-x
-```
-
 # Objetos en R: Factors
 * Se usan para representar datos categóricos (nominales u ordinales). Son algo así como un vector de integers con una etiqueta asociada (algo parecido a SPSS).
 * Algunas funciones como `lm()` y `glm()` hacen un uso especial de los factores
@@ -202,23 +231,6 @@ x
 table(x)
 ```
 
-# Objetos en R: Missing Values
-* Son denotados `NA` o `NaN`
-* `is.na()` se usa para testear si en un objeto hay NA´s
-* `is.nan()` se usa para testear si en un objeto hay NaN´s
-* `NA` tiene una clase: hay integer NA´s, character NA´s
-* Todo `NaN` es un `NA`, lo inverso no es cierto
-
-# Objetos en R: Missing Values
-```{r, highlight=TRUE, prompt=TRUE, strip.white=FALSE, collapse=TRUE, tidy=TRUE, echo=TRUE}
-x<-c(15,20,31,NA,12)
-is.na(x)
-is.nan(x)
-x<-c(15,NaN,31,NA,12)
-is.na(x)
-is.nan(x)
-```
-
 # Objetos en R: Data Frames
 * Son lo más parecido a lo que entendemos en ciencias sociales por base de datos. Se usan para almacenar datos tabulares.
 * Para R son un tipo especial de list, en la cual cada elemento de la lista tiene la misma longitud (`length()`)
@@ -237,28 +249,15 @@ ncol(x)
 row.names(x)
 ```
 
-# Objetos en R: names
-* Los diferentes objetos que vimos tienen nombres
+# Objetos en R: Listas
+* Las listas son una clase especial de vector: pueden contener elementos de cualqueir tipo en su interior.
+* Son objetos muy importantes en R: la mayoría de los resultados de los modelos que se aplican en R devuelven como output un objeto que es una lista.
+* Otro ejemplo: al importar datos de un GIS (.shp, .geojson, geodatabase, etc.) R los interpreta como una lista.
 
-* Vectores:
-```{r, highlight=TRUE, prompt=TRUE, collapse=TRUE, echo=TRUE}
-x<-1:4
-names(x)
-names(x)<-c("a","p","c","x")
-```
-
-# Objetos en R: names
-* Listas:
-```{r, highlight=TRUE, prompt=TRUE, collapse=TRUE, echo=TRUE}
-m<-list(a=1, b="A",c=TRUE, d=15.3242342)
-names(m)
-```
-
-# Objetos en R: names
-* Data Frames:
-```{r, echo=TRUE, collapse=TRUE, highlight=TRUE, prompt=TRUE}
-x<-data.frame(ident=1:4, tratamiento=c("D","B","A","D"))
-names(x)
+# Objetos en R: Listas
+```{r, highlight=TRUE, prompt=TRUE, strip.white=FALSE, collapse=TRUE, tidy=TRUE, echo=TRUE}
+x<-list(1,"a",TRUE, 4.6)
+x
 ```
 
 # Subsetting/Slicing en R
@@ -277,17 +276,6 @@ x[1:4]
 x[4:1]
 x[c(1,5,8)]
 x[-c(1,5,8)]
-```
-
-# Subsetting/Slicing en R: Matrices
-```{r, highlight=TRUE, prompt=TRUE, strip.white=FALSE, collapse=TRUE, tidy=TRUE}
-x<-1:4
-y<-c("Z","Z","E","F")
-mat<-cbind(x,y)
-mat[1,]
-mat[,1]
-mat[,2]
-mat[3,2]
 ```
 
 # Subsetting/Slicing en R: Data Frames
@@ -370,54 +358,6 @@ m<-cbind(x,y)
 m1<-m[complete.cases(m),]
 m1
 ```
-
-# Importando Datos en R
-* Varias funciones importantes: 
-	+ `read.table()` y `read.csv()` para leer datos tabulares
-	+ `readLines()` para leer líneas en un archivo de texto
-	+ `read.spss()` en el paquete *foreign* que unifica muchas las funciones de importación exportación
-
-# Importando Datos en R: `read.table()`
-* De las más usadas. El formato es similar al resto
-	+ `file`: string con el nombre y la ruta del archivo a importar
-	+ `header`: logical indicado si el archivo tiene cabeceras
-	+ `sep`: string que indica cómo se separan las columnas
-	+ `colClasses`: character vector que indica la clase de cada columna ("character","integer",etc.)
-	+ `nrows`: cantidad de filas en el dataset
-	+ `skip`: cantidad de filas que hay que saltear contando desde el principio en el dataset
-	+ `stringAsFactors`: logical que indica si al importar el archivo deben codificarse los strings como factors
-
-# Importando Datos en R: `read.table()`
-* Si el archivo no es muy grande puede usarse directamente:
-```{r, highlight=TRUE, prompt=TRUE, strip.white=FALSE, collapse=TRUE, tidy=TRUE,eval=FALSE}
-data<-read.table("prueba.txt")
-```
-* R va a realizar algunas tareas automáticamente:
-	+ saltear las líneas que empiezan con #
-	+ calcular cuántas filas hay y cuánta memoria necesita reservar
-	+ identificar la clase de cada columna (si uno lo define con los argumentos resulta más eficiente)
-	+ `read.csv()` es idéntico a `read.table()` con la diferencia de que el sperador es la coma.
-
-# Importando Datos "grandes" en R: `read.table()`
-* Si se enfrentan con un dataset grandes pueden
-	+ consultar la documentación de la función
-	+ Setear el argumento `colClasses`: suele ser mucho más rápido dado que R no tiene que realizar la tarea de detectar los tipos de cada columna. 
-	+ Setar `nrows` esto ayuda a usar menos memoria... no a que sea necesariamente más rápido.
-```{r, highlight=TRUE, prompt=TRUE, strip.white=FALSE, collapse=TRUE, tidy=TRUE,eval=FALSE}
-init<-read.table("prueba.txt",nrows=100)
-classes<-sapply(init,class)
-todos<-read.table("prueba.txt"
-		  ,colClasses = classes)
-```	
-# Importando Datos "grandes" en R: `read.table()`
-* Además de todo esto es importante hacer una estimación gruesa de la memoria que va a requerir cargar el dataset.
-* Si la memoria requerida es más de la dispnible en el el sistema... 
-* Cálculo grueso: supongamos un dataframe con 2.000.000 de filas y 200 columnas todos datos numéricos
-	+ 2.000.000 x 200 x 8 bytes/numerics
-	+ 2.400.000.000 bytes
-	+ 2.400.000.000 bytes / 2^20 bytes/MB
-	+ 2.288,8 MB
-	+ 2.24 GB
 
 # Funciones en R
 * Las funciones se crean con el argumento `function()` y se almacenan como un objeto en R. 
