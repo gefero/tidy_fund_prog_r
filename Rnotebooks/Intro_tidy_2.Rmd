@@ -1,0 +1,354 @@
+---
+title: "Introducción al `tidyverse` con datos geográficos. Capítulo 2."
+author: "Dr. Germán Rosati"
+output: html_notebook
+---
+
+
+```{r include=FALSE}
+knitr::opts_chunk$set(message=FALSE, warning=TRUE, highlight=TRUE, echo=TRUE,
+                      fig.width=20, fig.height=15)
+```
+
+## Introducción
+La idea de esta serie notebooks es poder introducir algunos conceptos básicos del llamado `tidyverse` en R. Vamos a tratar de hacernos amigos de algunos algunos de los verbos que vimos hace un rato y que nos van a hacer la vida más fácil en la manipulación de datos.
+
+### Objetivos
+* Brindar nociones sobre la lógica general del `tidyverse` para el preprocesamiento de datos
+* Introducir algunas funciones básicas para el filtrado, trasformación y merge de datos
+* Presentar herramientas para la visualización de datos
+
+
+En el notebook anterior, introdujimos algunos varios aspectos:
+
+1. Empezamos explorar una herramienta para visualización de datos: `ggplot2()`
+2. Mencionamos y utilizamos los cinco verbos de `dplyr` que más son utilizados en el preprocesmaiento de datos: `filter()`, `mutate()`, `group_by()`, `summarize()` y `arrange()`
+3. Realizamos algunas tareas de preprocesamiento.
+
+La idea es profundizar en estos problemas.
+
+```{r message=FALSE, warning=FALSE}
+library(tidyverse)
+```
+
+
+
+```{r}
+delitos <- read.csv("../data/delitos.csv")
+delitos <- delitos %>%
+                filter(latitud!=0, longitud!=0)
+str(delitos)
+```
+
+```{r}
+library(lubridate)
+delitos <- delitos %>% 
+                mutate(fecha=ymd(fecha))
+```
+
+
+## Trabajando con fechas
+
+Ya tenemos nuestro dataset listo y consistido. En este aparado, la idea es aplicar la potencia que tiene la librería `lubridate` para manipular datos de fechas.
+
+Veamos algunas de las tareas que podemos encarar. Tomemos cinco fechas elegidas al azar:
+
+
+```{r}
+set.seed("99")
+muestra_de_fechas <- delitos %>% 
+    sample_n(5) %>% 
+    select(fecha)
+
+muestra_de_fechas
+
+```
+
+
+Veamos otra forma de obtener el mismo resultado:
+
+```{r}
+set.seed("99")
+muestra_de_fechas <- delitos %>% 
+    sample_n(5) %>% 
+    pull(fecha)
+
+muestra_de_fechas
+```
+
+
+¿En qué se diferencia ambas?
+
+
+Tomando como input este vector podemos 
+
+* Extraer el día de la semana que corresponde a cada fecha:
+
+```{r}
+wday(muestra_de_fechas)
+```
+
+```{r}
+wday(muestra_de_fechas, label=TRUE)
+```
+
+
+* El mes
+
+```{r}
+month(muestra_de_fechas)
+```
+
+* El año
+
+```{r}
+year(muestra_de_fechas)
+```
+
+Operaciones parecidas podríamos hacer con variables de hora. Pueden consultar la [documentación](month(muestra_de_fechas)
+) al respecto.
+
+
+```{r}
+options(scipen = 20)
+
+ggplot(delitos) + 
+    geom_bar(aes(x = year(fecha)))
+```
+
+
+
+```{r}
+delitos %>%
+        select(fecha) %>%
+        filter(year(fecha) >= 2016) %>% 
+        ggplot() +
+                geom_bar(aes(x = month(fecha, label = TRUE)))
+```
+
+
+Podemos obtener también un gráfico de barras apiladas:
+
+```{r}
+delitos %>% 
+    filter(year(fecha) >= 2016) %>% 
+    ggplot() +
+        geom_bar(aes(x = month(fecha, label = TRUE), fill = tipo_delito))
+
+```
+
+O de barras sin apilar:
+
+```{r}
+delitos %>% 
+    filter(year(fecha) >= 2016) %>% 
+    ggplot() +
+        geom_bar(aes(x = month(fecha, label = TRUE), fill = tipo_delito),
+                 position = "dodge")
+```
+
+
+## Consignas
+
+En todos los casos, realice el gráfico que considere más relevante para responder a la pregunta
+
+1. ¿En qué horarios del día hay más delitos habitualmente? 
+
+```{r echo=TRUE}
+delitos %>% 
+        filter(year(fecha) >= 2016) %>% 
+        mutate(hora = hour(hms(hora))) %>%
+        select(hora) %>%
+        group_by(hora) %>%
+        summarise(tot=n()) %>%
+        ggplot() + 
+                geom_line(aes(x=hora, y=tot), color='red')
+    
+```
+
+2. ¿Cuál es el tipo de delito más habitual al mediodía? 
+
+```{r echo=TRUE}
+delitos %>% 
+        filter(year(fecha) >= 2016) %>% 
+        mutate(hora = hour(hms(hora))) %>%
+        select(hora, tipo_delito) %>%
+        group_by(hora, tipo_delito) %>%
+        summarise(tot=n()) %>%
+        ggplot() + 
+                geom_line(aes(x=hora, y=tot, color=tipo_delito))
+
+```
+
+
+3. ¿Puede notarse alguna diferencia en la distribución horaria del total de delitos entre las comunas?
+
+
+```{r echo=TRUE}
+delitos %>% 
+        filter(year(fecha) >= 2016) %>% 
+        mutate(hora = hour(hms(hora))) %>%
+        select(hora, comuna) %>%
+        group_by(hora, comuna) %>%
+        summarise(tot=n()) %>%
+        ggplot() + 
+                geom_line(aes(x=hora, y=tot, color=comuna))
+
+```
+
+4. Seleccione el barrio con mayor cantidad de delitos en cada comuna
+
+```{r}
+delitos %>%
+        group_by(barrio, comuna) %>%
+        summarise(tot=n()) %>%
+        group_by(comuna) %>%
+        filter(tot==max(tot)) %>%
+        arrange(comuna)
+```
+
+
+
+## Generando mapas buenos, bellos y bonitos
+
+Ahora bien, hasta aquí hemos explorado la dimensión "tiempo" de nuestro dataset. Pero cómo habíamos mencionado en el notebook anterior, también contamos con una dimesión espacial, dado que tenemos los puntos georreferenciados.
+
+Es por ello que vamos a mostrar como realizar algunos mapas interesantes, para lo cual, vamos a uilizar la librería `ggmap`, que sigue buena parte de las convenciones y lógica de `ggplot`.
+
+```{r}
+library(ggmap)
+```
+
+Una de las ventajas de `ggmap` es que podemos generar un mapa base para que nuestros "puntitos" no se vean tan desprovistos, La manera más simple de hacerlo es definir una *bounding box* que va a constituir una especie de "caja" que deliminan las coordenadas de nuestro mapa base:
+
+```{r}
+bbox <- c(min(delitos$longitud, na.rm = TRUE),
+          min(delitos$latitud, na.rm = TRUE),
+          max(delitos$longitud, na.rm = TRUE),
+          max(delitos$latitud, na.rm = TRUE))
+
+CABA <- get_stamenmap(bbox = bbox, 
+                      maptype = "terrain-background")
+```
+
+Veamos cómo queda:
+
+```{r}
+ggmap(CABA)
+```
+
+
+Podemos haber usado otro `maptype`, el "toner-lite" es útil para visualizaciones por su contraste:
+
+```{r}
+CABA <- get_stamenmap(bbox = bbox, 
+                      maptype = "toner-lite")
+
+ggmap(CABA)
+
+```
+
+
+### Mapeando datos...
+Retomemos nuestro scatter de puntos: pero ahora compliquémosla desde el principio. Hagamos un mapa de todos los delitos, diferenciando por color el tipo de delito:
+
+```{r}
+ggmap(CABA) +
+    geom_point(data = delitos, aes(x = longitud, y = latitud, color=tipo_delito),
+               size = 0.1, alpha = 0.1)
+```
+
+Está bonito, pero vemos dos problemas:
+
+1. La leyenda es difícil de leer
+2. La escala de colores no es la mejor, en tanto y en cuanto, no permite discernir claramente diferencias por categoría
+
+El primer problema lo solucionamos fijando a mano los valores de la estética de la leyenda:
+
+```{r}
+ggmap(CABA) +
+    geom_point(data = delitos, 
+               aes(x = longitud, y = latitud, color = tipo_delito),
+               size = 0.1, alpha = 0.1) +
+    guides(color = guide_legend(override.aes = list(size=2, alpha = 1))) 
+```
+
+
+
+El segundo... ya lo vimos... facetando
+
+
+```{r}
+ggmap(CABA) +
+    geom_point(data = delitos, 
+               aes(x = longitud, y = latitud, color = tipo_delito),
+               size = 0.1, alpha = 0.1) +
+        facet_wrap(~tipo_delito) +
+        guides(color = guide_legend(override.aes = list(size=2, alpha = 1))) +
+        theme(strip.text.x = element_text(size=7.5))
+
+```
+
+
+```{r}
+
+delitos <- delitos %>% 
+    mutate(hora_base = hour(hms(hora)))
+
+ggmap(CABA) +
+    geom_density2d(data = delitos, aes(x = longitud, y = latitud, color = stat(level))) +
+        scale_color_viridis_c() + 
+        facet_wrap(~tipo_delito) +
+        theme(strip.text.x = element_text(size=7.5))
+
+```
+
+
+
+
+```{r}
+
+ggmap(CABA) +
+    geom_density2d(data = delitos, aes(x = longitud, y = latitud, color = stat(level))) +
+        scale_color_viridis_c() + 
+        facet_wrap(~hora_base, nrow=4)
+```
+
+
+```{r}
+
+ggmap(CABA) +
+    geom_density2d(data = delitos, aes(x = longitud, y = latitud, color = stat(level))) +
+        scale_color_viridis_c() + 
+        facet_wrap(~hora_base, nrow=4)
+```
+
+
+# Consignas
+Repetir los últimos mapas, pero generando información solamente sobre los hurtos de automotores.
+
+* Densidad por día
+
+```{r}
+
+delitos <- delitos %>%
+        mutate(dia=wday(ymd(fecha), label=TRUE))
+
+ggmap(CABA) +
+        geom_density2d(data=filter(delitos, tipo_delito=='Robo Automotor' | tipo_delito=='Hurto Automotor'),  aes(x = longitud, y = latitud, color = stat(level))) +
+        scale_color_viridis_c() +
+        facet_wrap(~dia, nrow=3)
+
+```
+
+
+* Densidad por hora
+
+```{r}
+ggmap(CABA) +
+    geom_density2d(data = filter(delitos, tipo_delito=='Robo Automotor' | tipo_delito=='Hurto Automotor'), aes(x = longitud, y = latitud, color = stat(level))) +
+        scale_color_viridis_c() + 
+        facet_wrap(~hora_base, nrow=4)
+
+```
+

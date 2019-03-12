@@ -1,0 +1,241 @@
+---
+title: "Introducción al `tidyverse` con datos geográficos. Capítulo 2."
+author: "Dr. Germán Rosati"
+output: html_notebook
+---
+
+
+```{r include=FALSE}
+knitr::opts_chunk$set(message=FALSE, warning=TRUE, highlight=TRUE)
+```
+
+## Introducción
+La idea de esta serie notebook es poder introducir algunos conceptos básicos del llamado `tidyverse` en R. Vamos a tratar de hacernos amigos de algunos algunos de los verbos que vimos hace un rato y que nos van a hacer la vida más fácil en la manipulación de datos.
+
+### Objetivos
+* Brindar nociones sobre la lógica general del `tidyverse` para el preprocesamiento de datos
+* Introducir algunas funciones básicas para el filtrado, trasformación y merge de datos
+* Presentar herramientas para la visualización de datos
+
+
+En el notebook anterior, introdujimos algunos varios aspectos:
+
+1. Empezamos explorar una herramienta para visualización de datos: `ggplot2()`
+2. Mencionamos y utilizamos los cinco verbos de `dplyr` que más son utilizados en el preprocesmaiento de datos: `filter()`, `mutate()`, `group_by()`, `summarize()` y `arrange()`
+3. Realizamos algunas tareas de preprocesamiento.
+
+La idea es profundizar en estos problemas.
+
+```{r}
+library(tidyverse)
+```
+
+
+## ¿Qué hacemos cuándo tenemos datos que cambian en el tiempo?
+Es habitual encontrarnos con datasets que se publican periódicamente y que cambian su formato, su estructura: se agregan variables, se quitan, se modiican categorías, etc. Es importante en estos casos poder realizar tareas de armonización de este tipo de datasets.
+
+Hete aquí que nuestra tabla de delitos (además de haber sido scrapeada de un sitio oficial) presenta cambios en el tiempo. Veamos:
+
+```{r}
+delitos <- read.csv("../data/delitos.csv")
+delitos <- delitos %>%
+                filter(latitud!=0, longitud!=0)
+str(delitos)
+```
+
+```{r}
+delitos2 <- read.csv("https://bitsandbricks.github.io/data/crimenydelito.csv")
+delitos2 <- delitos2 %>%
+                filter(latitud!=0, longitud!=0)
+str(delitos2)
+```
+
+A priori vemos que la estructura de datos parece simiar: 
+
+* Hay 14 variables
+* Hay menos casos en la segunda
+
+Pero las principales diferencias parecen estar al final. 
+
+* Mientras que nuestro dataset original, presenta solamente datos en los los delitos se produjeron exclusivamente "SIN USO DE ARMAS" y "SIN USO DE MOTO". Esto no es así en el segundo dataset.
+* A su vez, la clasificación de tipos de delitos es diferente 
+* Y, por último, las variables cantidad de víctimas y de vehículos presenta valroes diferentes.
+
+
+```{r}
+summary(delitos)
+```
+
+
+```{r}
+summary(delitos2)
+```
+* Por último, los datos parecen corresponder a períodos diferentes:
+
+```{r}
+library(lubridate)
+delitos <- delitos %>% 
+                mutate(fecha=ymd(fecha))
+
+#delitos2 <- delitos2 %>% 
+#                mutate(fecha=ymd(fecha))
+
+range(delitos$fecha)
+```
+
+```{r}
+delitos2 %>%
+        select(fecha) %>%
+        summarise(min(fecha), max(fecha))
+```
+
+Entonces, la pregunta es... ¿qué hacemos? Tenemos dos sets de datos que difieren notablemente. Vamos a tratar de consistir unos con otros. Básicamente, vamos a tratar de completar en nuestro dataset los datos que podamos recuperar del nuevo dataset.
+
+
+## Trabajando con fechas
+
+Ya tenemos nuestro dataset listo y consistido. En este aparado, la idea es aplicar la potencia que tiene la librería `lubridate` para manipular datos de fechas.
+
+Veamos algunas de las tareas que podemos encarar. Tomemos cinco fechas elegidas al azar:
+
+```{r}
+set.seed("99")
+muestra_de_fechas <- delitos %>% 
+    sample_n(5) %>% 
+    pull(fecha)
+
+muestra_de_fechas
+```
+
+Tomando como input este vector podemos 
+
+* Extraer el día de la semana que corresponde a cada fecha:
+
+```{r}
+wday(muestra_de_fechas)
+```
+
+```{r}
+wday(muestra_de_fechas, label=TRUE)
+```
+
+
+* El mes
+
+```{r}
+month(muestra_de_fechas)
+```
+
+* El año
+
+```{r}
+year(muestra_de_fechas)
+```
+
+
+Operaciones parecidas podríamos hacer con variables de hora. Pueden consultar la [documentación](month(muestra_de_fechas)
+) al respecto.
+
+
+```{r}
+#options(scipen = 20)
+
+ggplot(delitos) + 
+    geom_bar(aes(x = year(fecha)))
+```
+
+```{r}
+delitos %>%
+        select(fecha) %>%
+        filter(year(fecha) >= 2016) %>% 
+        ggplot() +
+                geom_bar(aes(x = month(fecha, label = TRUE)))
+```
+
+
+```{r}
+delitos %>% 
+    filter(year(fecha) >= 2016) %>% 
+    ggplot() +
+        geom_bar(aes(x = month(fecha, label = TRUE), fill = tipo_delito))
+
+```
+
+
+```{r}
+delitos %>% 
+    filter(year(fecha) >= 2016) %>% 
+    ggplot() +
+        geom_bar(aes(x = month(fecha, label = TRUE), fill = tipo_delito),
+                 position = "dodge")
+```
+
+
+
+```{r}
+delitos %>% 
+    filter(year(fecha) >= 2016) %>% 
+    ggplot() +
+        geom_bar(aes(x = month(fecha, label = TRUE), fill = tipo_delito),
+                 position = "dodge")
+```
+
+
+## Generando mapas buenos, bellos y bonitos
+
+```{r}
+library(ggmap)
+```
+
+
+```{r}
+bbox <- c(min(delitos$longitud, na.rm = TRUE),
+          min(delitos$latitud, na.rm = TRUE),
+          max(delitos$longitud, na.rm = TRUE),
+          max(delitos$latitud, na.rm = TRUE))
+
+CABA <- get_stamenmap(bbox = bbox, 
+                      maptype = "toner-lite")
+```
+
+```{r}
+ggmap(CABA)
+
+```
+
+
+```{r}
+ggmap(CABA) +
+    geom_point(data = delitos, aes(x = longitud, y = latitud))
+```
+
+```{r}
+ggmap(CABA) +
+    geom_point(data = delitos, aes(x = longitud, y = latitud),
+               color = "orange", size = 0.1, alpha = 0.1)
+```
+
+
+```{r}
+ggmap(CABA) +
+    geom_bin2d(data = delitos, 
+               aes(x = longitud, y = latitud))
+```
+
+```{r}
+ggmap(CABA) +
+    geom_bin2d(data = delitos, aes(x = longitud, y = latitud), bins = 100) +
+    scale_fill_viridis_c()
+```
+
+
+```{r}
+
+delitos <- delitos %>% 
+    mutate(hora_base = hour(hms(hora)))
+
+ggmap(CABA) +
+    geom_density2d(data = delitos, aes(x = longitud, y = latitud, color = stat(level))) +
+    scale_color_viridis_c() + facet_wrap(~hora_base, nrow=4)
+```
+
