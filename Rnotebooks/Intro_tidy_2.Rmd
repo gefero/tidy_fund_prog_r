@@ -2,22 +2,24 @@
 title: "Introducción al `tidyverse` con datos geográficos. Capítulo 2."
 author: "Dr. Germán Rosati"
 output: html_notebook
+fig_width: 15
+fig_height: 20 
 ---
 
 
 ```{r include=FALSE}
-knitr::opts_chunk$set(message=FALSE, warning=TRUE, highlight=TRUE, echo=TRUE,
-                      fig.width=20, fig.height=15)
+knitr::opts_chunk$set(message=FALSE, warning=TRUE, highlight=TRUE, echo=TRUE)
 ```
 
 ## Introducción
 La idea de esta serie notebooks es poder introducir algunos conceptos básicos del llamado `tidyverse` en R. Vamos a tratar de hacernos amigos de algunos algunos de los verbos que vimos hace un rato y que nos van a hacer la vida más fácil en la manipulación de datos.
 
+
+
 ### Objetivos
 * Brindar nociones sobre la lógica general del `tidyverse` para el preprocesamiento de datos
 * Introducir algunas funciones básicas para el filtrado, trasformación y merge de datos
 * Presentar herramientas para la visualización de datos
-
 
 En el notebook anterior, introdujimos algunos varios aspectos:
 
@@ -32,7 +34,6 @@ library(tidyverse)
 ```
 
 
-
 ```{r}
 delitos <- read.csv("../data/delitos.csv")
 delitos <- delitos %>%
@@ -40,11 +41,12 @@ delitos <- delitos %>%
 str(delitos)
 ```
 
-```{r}
+```{r message=FALSE, warning=FALSE}
 library(lubridate)
 delitos <- delitos %>% 
                 mutate(fecha=ymd(fecha))
 ```
+
 
 
 ## Trabajando con fechas
@@ -65,6 +67,7 @@ muestra_de_fechas
 ```
 
 
+
 Veamos otra forma de obtener el mismo resultado:
 
 ```{r}
@@ -77,7 +80,8 @@ muestra_de_fechas
 ```
 
 
-¿En qué se diferencia ambas?
+
+*¿En qué se diferencian ambas?*
 
 
 Tomando como input este vector podemos 
@@ -93,11 +97,14 @@ wday(muestra_de_fechas, label=TRUE)
 ```
 
 
+
 * El mes
 
 ```{r}
 month(muestra_de_fechas)
 ```
+
+
 
 * El año
 
@@ -105,107 +112,112 @@ month(muestra_de_fechas)
 year(muestra_de_fechas)
 ```
 
+
+
 Operaciones parecidas podríamos hacer con variables de hora. Pueden consultar la [documentación](month(muestra_de_fechas)
 ) al respecto.
 
 
-```{r}
-options(scipen = 20)
 
-ggplot(delitos) + 
-    geom_bar(aes(x = year(fecha)))
-```
-
-
+Veamos, ahora, la distribución mensual de delitos:
 
 ```{r}
 delitos %>%
         select(fecha) %>%
-        filter(year(fecha) >= 2016) %>% 
         ggplot() +
                 geom_bar(aes(x = month(fecha, label = TRUE)))
 ```
 
 
-Podemos obtener también un gráfico de barras apiladas:
+Podemos obtener también un gráfico de barras apiladas, para evaluar cuánto pesa cada tipo de delitp en el total:
 
 ```{r}
 delitos %>% 
-    filter(year(fecha) >= 2016) %>% 
     ggplot() +
         geom_bar(aes(x = month(fecha, label = TRUE), fill = tipo_delito))
 
 ```
 
+Y uno, 100% apilado:
+
+
+```{r}
+delitos %>% 
+    ggplot() +
+        geom_bar(aes(x = month(fecha, label = TRUE), fill = tipo_delito),
+                 position = "fill")
+```
+
+
 O de barras sin apilar:
 
 ```{r}
 delitos %>% 
-    filter(year(fecha) >= 2016) %>% 
     ggplot() +
         geom_bar(aes(x = month(fecha, label = TRUE), fill = tipo_delito),
                  position = "dodge")
 ```
 
 
-## Consignas
+El argumento `position` es el que determina si creamos un gráfico apilado, 100% apilado o sin apilar.
+
+
+
+### Consignas
 
 En todos los casos, realice el gráfico que considere más relevante para responder a la pregunta
 
 1. ¿En qué horarios del día hay más delitos habitualmente? 
 
 ```{r echo=TRUE}
-delitos %>% 
-        filter(year(fecha) >= 2016) %>% 
-        mutate(hora = hour(hms(hora))) %>%
-        select(hora) %>%
-        group_by(hora) %>%
-        summarise(tot=n()) %>%
-        ggplot() + 
-                geom_line(aes(x=hora, y=tot), color='red')
-    
+###
 ```
 
 2. ¿Cuál es el tipo de delito más habitual al mediodía? 
 
 ```{r echo=TRUE}
-delitos %>% 
-        filter(year(fecha) >= 2016) %>% 
-        mutate(hora = hour(hms(hora))) %>%
-        select(hora, tipo_delito) %>%
-        group_by(hora, tipo_delito) %>%
-        summarise(tot=n()) %>%
-        ggplot() + 
-                geom_line(aes(x=hora, y=tot, color=tipo_delito))
-
+###
 ```
 
 
 3. ¿Puede notarse alguna diferencia en la distribución horaria del total de delitos entre las comunas?
 
-
 ```{r echo=TRUE}
-delitos %>% 
-        filter(year(fecha) >= 2016) %>% 
-        mutate(hora = hour(hms(hora))) %>%
-        select(hora, comuna) %>%
-        group_by(hora, comuna) %>%
-        summarise(tot=n()) %>%
-        ggplot() + 
-                geom_line(aes(x=hora, y=tot, color=comuna))
-
+###
 ```
 
-4. Seleccione el barrio con mayor cantidad de delitos en cada comuna
+
+4. Genere un gráfico de barras 100% apilado de la distribución de delitos por día de la semana (etiquetada), pero solamente correspondiente a los registros del año 2017:
+
+
+```{r}
+###
+```
+
+
+
+5. Seleccione el barrio con mayor cantidad de delitos en cada comuna -no es necesario hacer un gráfico-
+
+```{r}
+###
+```
+
+
+#### Imporante...
+
+Aquí hay un punto importante a tener en cuenta en el uso de los `group_by`: el orden en el que pasamos las variables importa. En el ejemplo, anterior buscamos dentro cada comuna, el barrio con mayor conteo. Eso se ve en el `group_by(comuna, barrio)`.
+
+Ahora bien, supongamos que por error escribimos lo siguiente:
 
 ```{r}
 delitos %>%
         group_by(barrio, comuna) %>%
         summarise(tot=n()) %>%
-        group_by(comuna) %>%
         filter(tot==max(tot)) %>%
         arrange(comuna)
 ```
+
+La salida ya no se parece a la anterior. Para empezar, tiene 48 filas... Lo que pasó aquí es que buscamos al interior de cada barrio, la comuna con mayor n de delitos, cosa que no tiene demasiado sentido.
 
 
 
@@ -278,22 +290,21 @@ ggmap(CABA) +
 El segundo... ya lo vimos... facetando
 
 
-```{r}
+```{r fig.height=12, fig.width=12}
 ggmap(CABA) +
     geom_point(data = delitos, 
                aes(x = longitud, y = latitud, color = tipo_delito),
-               size = 0.1, alpha = 0.1) +
+               size = 0.2, alpha = 0.1) +
         facet_wrap(~tipo_delito) +
         guides(color = guide_legend(override.aes = list(size=2, alpha = 1))) +
         theme(strip.text.x = element_text(size=7.5))
 
 ```
 
+Ahí la cosa está un poco más clara. No obstante hay varias formas de hacer más observables estos patrones. Solo vamos a mostrar una, como para dar la intuición. Vamos a detectar las zonas de mayor concentración de delitos, por tipo de delito. Para ello, vamos a usar una técnica con el estrambótico nombre de [**two dimentional kernel density estimation**](https://en.wikipedia.org/wiki/Multivariate_kernel_density_estimation).
 
-```{r}
 
-delitos <- delitos %>% 
-    mutate(hora_base = hour(hms(hora)))
+```{r fig.height=12, fig.width=12}
 
 ggmap(CABA) +
     geom_density2d(data = delitos, aes(x = longitud, y = latitud, color = stat(level))) +
@@ -305,50 +316,56 @@ ggmap(CABA) +
 
 
 
+Aquí se ve de forma más nítida que la distribución espacial de cada tipo de delito es bien diferenciada.
 
-```{r}
-
-ggmap(CABA) +
-    geom_density2d(data = delitos, aes(x = longitud, y = latitud, color = stat(level))) +
-        scale_color_viridis_c() + 
-        facet_wrap(~hora_base, nrow=4)
-```
+Veamos, ahora, la distribución del total de delitos por día y hora de la semana:
 
 
-```{r}
+```{r fig.height=12, fig.width=12}
+delitos <- delitos %>% 
+    mutate(hora_base = hour(hms(hora)))
 
 ggmap(CABA) +
     geom_density2d(data = delitos, aes(x = longitud, y = latitud, color = stat(level))) +
         scale_color_viridis_c() + 
-        facet_wrap(~hora_base, nrow=4)
+        facet_wrap(~hora_base, nrow=4) +
+         labs(title = "Concentración espacial de delitos",
+         subtitle = "según hora del día")
+        
 ```
 
 
-# Consignas
-Repetir los últimos mapas, pero generando información solamente sobre los hurtos de automotores.
 
-* Densidad por día
-
-```{r}
+```{r fig.height=12, fig.width=12}
 
 delitos <- delitos %>%
         mutate(dia=wday(ymd(fecha), label=TRUE))
 
 ggmap(CABA) +
-        geom_density2d(data=filter(delitos, tipo_delito=='Robo Automotor' | tipo_delito=='Hurto Automotor'),  aes(x = longitud, y = latitud, color = stat(level))) +
-        scale_color_viridis_c() +
-        facet_wrap(~dia, nrow=3)
+    geom_density2d(data = delitos, aes(x = longitud, y = latitud, color = stat(level))) +
+        scale_color_viridis_c() + 
+        facet_wrap(~dia, ncol=3) + 
+        labs(title = "Concentración espacial de delitos",
+         subtitle = "según día de la semana")
 
+```
+
+
+
+
+### Consignas
+Repetir los últimos mapas, pero generando información solamente sobre los hurtos de automotores.
+
+* Densidad por día
+
+```{r fig.height=12, fig.width=12}
+###
 ```
 
 
 * Densidad por hora
 
-```{r}
-ggmap(CABA) +
-    geom_density2d(data = filter(delitos, tipo_delito=='Robo Automotor' | tipo_delito=='Hurto Automotor'), aes(x = longitud, y = latitud, color = stat(level))) +
-        scale_color_viridis_c() + 
-        facet_wrap(~hora_base, nrow=4)
-
+```{r fig.height=12, fig.width=12}
+###
 ```
 

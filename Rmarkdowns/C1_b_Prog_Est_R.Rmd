@@ -1,28 +1,36 @@
 ---
 title: "Fundamentos de la programación estadística y Data Mining en R"
 subtitle: "Unidad 1. Programación Estadística en R: Introducción a `tidyverse`"
-output: beamer_presentation
-colortheme: orchid
-fig_caption: TRUE
-fonttheme: professionalfonts
-highlight: tango
-#theme: Darmstadt
-theme: Boadilla
-toc: FALSE
+output:
+  slidy_presentation: default
+  ioslides_presentation: default
 author: "Dr. Germán Rosati (CONICET - UNSAM - UNTREF)"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 ---
 
-```{r message=FALSE, warning=FALSE, include=FALSE}
-library(tidyverse)
-library(sf)
-library(gdalUtils)
-getwd()
-delitos <- read.csv("../data/delitos.csv")
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
 ```
 
 
-# Las cinco instrucciones básicas de `dplyr`
+
+```{r message=FALSE, warning=FALSE, include=FALSE, paged.print=FALSE}
+knitr::opts_chunk$set(echo=TRUE, message=FALSE, warning=FALSE, collapse=TRUE, highlight=TRUE, paged.print=FALSE, prompt=TRUE, strip.white=FALSE)
+```
+
+
+```{r message=FALSE, warning=FALSE, include=FALSE}
+library(tidyverse)
+library(sf)
+library(lubridate)
+delitos <- read.csv("../data/delitos.csv")
+delitos <- delitos %>%
+                sample_n(5000)
+```
+
+
+## Las cinco instrucciones básicas de `dplyr`
+
 
 * Elegir observaciones en función a sus valores: `filter()`.
 * Reordenar las filas `arrange()`
@@ -31,28 +39,206 @@ delitos <- read.csv("../data/delitos.csv")
 * Colapsar valores a un solo resumen: `summarise()`
 
 
-* Todas pueden ser usadas en conjunto con `group_by()` que cambia el "scope" de cada función: en lugar de operar sobre todo el dataset, lo hace al interior de cada grupo definido.
+Todas pueden ser usadas en conjunto con `group_by()` que cambia el "scope" de cada función: en lugar de operar sobre todo el dataset, lo hace al interior de cada grupo definido.
 
 
-# Las cinco instrucciones básicas de `dplyr`
+## Las cinco instrucciones básicas de `dplyr`
 
-* Estas 6 funciones proveen los verbos para un "lenguaje" de manipulación de datos.
-* Todas funcionan de forma parecida
+Estas 6 funciones proveen los verbos para un "lenguaje" de manipulación de datos.
+Todas funcionan de forma parecida
 
 1. El primer argumento es un dataframe
 2. Los siguientes argumentos decriben qué hacer con el data frame, usando los nombres de variables sin comillas
 3. El resultado es un nuevo dataframe
 
 
-# Filtrando filas con `filter()`
+## Filtrando filas con `filter()`
 
-* Permite subsetear observaciones basados en sus valores. 
+Permite subsetear observaciones basados en sus valores. 
 
-        * El primer argumento es el dataframe
-        * Los siguientes, las expresiones filtran el dataset
+* El primer argumento es el dataframe
+* Los siguientes, las expresiones filtran el dataset
+
+## Filtrando filas con `filter()`
         
-```{r}
-filter(delitos, comuna=='Comuna 6' | comuna=='Comuna 10')
+```{r echo=TRUE, message=FALSE, warning=FALSE, collapse=TRUE, highlight=TRUE, paged.print=FALSE, prompt=TRUE, strip.white=FALSE}
+f <- filter(delitos, 
+            comuna=='Comuna 6' | comuna=='Comuna 10')
+head(f)
+```
+
+## Filtrando filas con `filter()`
+Para usar los filtros de forma efectiva es importante tener en cuenta los operadores que se usan
+
+Un error común: 
+
+* `filter(delitos, comuna='Comuna 6')`
+
+#### Operadores lógicos
+![](../Rmarkdowns/imgs/transform-logical.png)
+
+
+## Filtrando filas con `filter()`
+Seleccionemos los registros que ocurrieron en diciembre y enero
+
+```{r echo=TRUE, message=FALSE, collapse=TRUE, highlight=TRUE, paged.print=FALSE, prompt=FALSE, strip.white=FALSE, results='hide'}
+filter(delitos, month(ymd(fecha)) == 1 | month(ymd(fecha)) == 12)
+```
+
+Otra forma:
+
+```{r message=FALSE, warning=FALSE, collapse=TRUE, highlight=TRUE, include=FALSE, paged.print=FALSE, prompt=TRUE, strip.white=FALSE, results='hide'}
+filter(delitos, month(ymd(fecha)) %in% c(1,12))
 ```
 
 
+## Filtrando filas con `filter()`
+Simplificar expresiones complicadas
+*Ley de De Morgan:*
+ 
+* `!(x & y) == !x | !y`
+* `!(x | y) == !x & !y`
+
+rara traer los delitos que NO fueron en la Comuna 1 y NO en el primer trimestre del año, ambas líneas producen el mismo resultado:
+
+```{r message=FALSE, warning=FALSE, collapse=TRUE, highlight=TRUE, include=FALSE, paged.print=FALSE, prompt=TRUE, strip.white=FALSE, results='hide'}
+filter(delitos, !(comuna=='Comuna 6' | month(ymd(fecha)) > 3))
+
+filter(delitos, (!comuna=='Comuna 6' & !month(ymd(fecha)) > 3))
+```
+
+
+## Filtrando filas con `filter()`
+### Missing data
+
+Los `NA` son tramposos en R.
+
+* Casi cualquier operación incluyendo un `NA` va a devolver otro `NA`
+
+```{r echo=TRUE, message=FALSE, warning=FALSE, collapse=TRUE, highlight=TRUE, paged.print=FALSE, prompt=TRUE, strip.white=FALSE}
+x <- NA
+y <- NA
+
+x == y
+```
+
+## Filtrando filas con `filter()`
+### Missing data
+
+* Para detectar `NA` se puede usar la función `is.na(x)`
+
+
+```{r echo=TRUE, message=FALSE, warning=FALSE, collapse=TRUE, highlight=TRUE, paged.print=FALSE, prompt=TRUE, strip.white=FALSE}
+is.na(x)
+```
+
+```{r echo=TRUE, message=FALSE, warning=FALSE, collapse=TRUE, highlight=TRUE, paged.print=FALSE, prompt=TRUE, strip.white=FALSE, results='markup'}
+
+df <- data.frame(x = c(1, NA, 3))
+
+filter(df, x > 1)
+
+
+filter(df, x > 1 | is.na(x))
+
+```
+
+## Ordenando filas con `arrange()`
+* `arrange()` funciona de forma similar a `filter()` pero en lugar de seleccionar filas, cambia su orden
+* Toma un dataframe y un set de columnas (o expresiones más complicadas)
+
+
+```{r echo=TRUE, message=FALSE, warning=FALSE, collapse=TRUE, highlight=TRUE, paged.print=FALSE, prompt=TRUE, strip.white=FALSE, results='markup'}
+
+f<-arrange(delitos, comuna, ymd(fecha), hms(hora))
+head(f)
+```
+
+## Ordenando filas con `arrange()`
+* Usamos `desc()` para ordenar de forma descendente
+
+```{r echo=TRUE, message=FALSE, warning=FALSE, collapse=TRUE, highlight=TRUE, paged.print=FALSE, prompt=TRUE, strip.white=FALSE, results='markup'}
+
+f<-arrange(delitos, comuna, desc(ymd(fecha)), desc(hms(hora)))
+head(f)
+```
+
+* Los `NA` siempre quedan al final de la tabla.
+
+
+## Seleccionando columnas con `select()`
+* Es habitual encontrarse con datasets de cientos o miles de variables. 
+* `select()` permite concentrarse en las variables que a uno le resulten relevantes
+* Se basa en los nombres de las variables 
+
+```{r echo=TRUE, message=FALSE, warning=FALSE, collapse=TRUE, highlight=TRUE, paged.print=FALSE, prompt=TRUE, strip.white=FALSE, results='markup'}
+f<-select(delitos, comuna, barrio, tipo_delito) # Selección por nombre
+head(f)
+
+f<-select(delitos, comuna:fecha) # Selección por rango de nombres
+head(f)
+
+f<-select(delitos, -(comuna:fecha)) # Selección de todas las columnas excepto las que están en el rango de nombres
+head(f)
+```
+
+## Seleccionando columnas con `select()`
+### Algunas funciones útiles
+
+* `starts_with("abc")`: matchea nombres que empiezan con “abc”.
+* `ends_with("xyz")`: matchea nombres que terminan con “xyz”.
+* `contains("ijk")`: matchea nombres que contienen con “ijk”.
+* `matches("(.)\\1")`: selecciona variables que matchean con una regex
+* `num_range("x", 1:3)`: matchea x1, x2 y x3.
+
+
+## Seleccionando columnas con `select()`
+* Para cambiar el orden de las columnas es útil usar `everything()`
+
+```{r echo=TRUE, message=FALSE, warning=FALSE, collapse=TRUE, highlight=TRUE, paged.print=FALSE, prompt=TRUE, strip.white=FALSE, results='markup'}
+f<-select(delitos, comuna, barrio, tipo_delito, everything())
+head(f)
+```
+
+## Seleccionando columnas con `select()`
+* Para renombrar puede usarse `rename()`
+
+```{r echo=TRUE, message=FALSE, warning=FALSE, collapse=TRUE, highlight=TRUE, paged.print=FALSE, prompt=TRUE, strip.white=FALSE, results='markup'}
+
+head(rename(delitos, COMUNA=comuna))
+
+```
+
+## Transformando columnas con `mutate()`
+* Suele ser útil crear nuevas columnas como funciones de columnas ya existentes.
+* `mutate()` siempre agrega nuevas columnas al final del dataset
+
+```{r echo=TRUE, message=FALSE, warning=FALSE, collapse=TRUE, highlight=TRUE, paged.print=FALSE, prompt=TRUE, strip.white=FALSE, results='markup'}
+f<-mutate(delitos, 
+          hora_simple = hour(hms(hora)),
+          dia=day(ymd(fecha)),
+          mes=month(ymd(fecha)),
+          year=year(ymd(fecha)))
+head(f)
+```
+
+## Transformando columnas con `mutate()`
+### Algunas operaciones de creación útiles
+
+* Operadores aritméticos: `+`, `-`, `*`, `/`, `^`, son útiles en conjunción con estadísticos:
+`zscore = (x - mean(x))/sd(x)`
+* Logs: `log()`, `log2()`, `log10()`: útiles cuando nos encontramos con datos de escalas muy diversas. También para convertir relaciones multiplicativas en aditivas -sumamente práctico para la etapa de modelado-.
+* Offsets: `lead()` y `lag()`
+* Acumuladores: `cumsum()`, `cumprod()`, `cummin()`, `cummax()`, `cummean()`
+...
+* Muchos más en [R for Data Science](https://r4ds.had.co.nz/transform.html#add-new-variables-with-mutate)
+
+
+## `group_by` + `summarize()`
+* `group_by` cambia la unidad de análsisi del dataset a grupos. Así, al llamar a cualqyuer verbo de `dplyr` se aplica "por grupo",
+* COnteo de delitos por mes
+
+```{r echo=TRUE, message=FALSE, warning=FALSE, collapse=TRUE, highlight=TRUE, paged.print=FALSE, prompt=TRUE, strip.white=FALSE, results='markup'}
+f<-group_by(delitos, f=month(ymd(fecha), label=TRUE))
+summarize(f, delay=n())
+```
