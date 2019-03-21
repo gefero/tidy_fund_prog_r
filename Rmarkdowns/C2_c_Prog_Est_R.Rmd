@@ -9,7 +9,7 @@ highlight: tango
 #theme: Darmstadt
 theme: Boadilla
 toc: FALSE
-author: "Dr. Germán Rosati (Digital House - UNSAM - UNTREF)"
+author: "Dr. Germán Rosati (CONICET - UNSAM - UNTREF)"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 ---
 

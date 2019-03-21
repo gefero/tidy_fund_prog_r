@@ -87,7 +87,8 @@ filter(delitos, month(ymd(fecha)) == 1 | month(ymd(fecha)) == 12)
 
 Otra forma:
 
-```{r message=FALSE, warning=FALSE, collapse=TRUE, highlight=TRUE, include=FALSE, paged.print=FALSE, prompt=TRUE, strip.white=FALSE, results='hide'}
+
+```{r echo=TRUE, message=FALSE, collapse=TRUE, highlight=TRUE, paged.print=FALSE, prompt=FALSE, strip.white=FALSE, results='hide'}
 filter(delitos, month(ymd(fecha)) %in% c(1,12))
 ```
 

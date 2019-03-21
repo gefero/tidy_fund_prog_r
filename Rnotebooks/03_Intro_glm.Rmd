@@ -1,0 +1,355 @@
+---
+title: "Regresión lineal en R."
+author: "Dr. Germán Rosati"
+output: html_notebook
+fig_width: 15
+fig_height: 20 
+---
+
+
+```{r include=FALSE}
+knitr::opts_chunk$set(message=FALSE, warning=TRUE, highlight=TRUE, echo=TRUE)
+```
+
+## Introducción
+Ahora que tenemos claros algunos aspectos relevantes del preprocesamiento de datos con `tidyverse`, podemos empezar a pensar en un análisis un poco más elaborado. Para ello, vamos a usar nuestro viejo y conocido dataset de delitos pero lo vamos a combinar con información censal correspondiente a los radios de la CABA.
+
+
+### Objetivos
+* Introducir nociones generales de modelos lineales 
+* Presentar las funciones en R para estimar y evaluar dichos modelos
+
+
+## Preprocesando el dataset
+Vamos a combinar información de los radios censales con nuestro dataset de delitos. La pregunta general que vamos a abordar es ¿qué características tienen los radios censales en los que se cometen delitos en la CABA?
+
+```{r warning=FALSE, include=FALSE}
+library(tidyverse)
+library(lubridate)
+library(sf)
+```
+
+
+Primero, carguemos nuestro dataset de delitos, filtremos los datos sin información de latitud y longitud y demos el formato adecuado a las varaibles de fecha y hora.
+
+```{r}
+delitos <- read.csv('../data/delitos.csv')
+
+delitos <- delitos %>% 
+        filter(latitud!=0 | longitud!=0) %>%
+        mutate(fecha=ymd(fecha),
+               hora=hms(hora))
+```
+
+
+Bien, ahora traigamos un datasets con información acerca de los radios censales de la ciudad.
+
+```{r}
+radios_gral <- st_read('../data/radios_gral.geojson')
+str(radios_gral)
+```
+
+
+Ahora bien, este dataset es de un tipo particular. Si se fijan el último campo se llama geometry y contiene la información para plotear los politicos de los radios.
+
+```{r}
+ggplot() + geom_sf(data = radios_gral)
+```
+
+Para poder operar bien con los datasets conjuntos, tenemos que transformar los datos de delitos en un formato geográfico. Para ello usamos la librería [`sf`](https://cran.r-project.org/web/packages/sf/vignettes/sf1.html).
+
+```{r}
+delitos <- st_as_sf(delitos, 
+                    coords=c('longitud', 'latitud'), 
+                    crs=4326)
+```
+
+Básicamente, le pasamos a la función `st_as_sf` las columnas que contienen la información geográfica de coordenadas (`coords`) y la proyección (`crs`) en la que están los datos.
+
+Ahora, vamos a hacer las cosas interesantes. La idea es poder realizar una operación que se llama "join espacial". Vamos a tratar de contar cuántos delitos hubo en cada uno de los radios censales.
+
+```{r}
+ggplot() + 
+        geom_sf(data=radios_gral) + 
+        geom_sf(data=sample_n(delitos,1000)) + 
+        facet_grid(~tipo_delito)
+```
+
+
+La operación va a constar de dos partes: la primera, vemos a joinear los datos de delitos con los los de radio. Generamos una nuevo objeto llamado `delitos_radios` que contiene para cada delito, la información del tadio al que pertenece.
+
+Usamos la función `st_join` que sirve par realizar estas operaciones. Pasamos ambos objetos como argumentos y usamos el argumento `st_within`.
+        
+```{r}
+delitos_radio <- st_join(delitos, 
+                          radios_gral, 
+                          join = st_within) %>%
+        as_tibble() 
+head(delitos)
+
+```
+
+Luego, contamos la cantidad de puntos en cada radio con un simple `group_by + summarise0` y realizamos un `left_join` con la tabla original de radios.
+
+```{r}
+radios_delitos <- delitos_radio %>%
+        group_by(RADIO_ID) %>%
+        summarise(n_delitos=n()) %>%
+        left_join(x=radios_gral)
+```
+
+
+Vemos, ahora, que el objeto `radios_delitos` es igual a `radios_general` pero con una columna más que se llama `n_delitos`
+
+```{r}
+str(radios_delitos)
+```
+
+
+Hagamos un primer mapa a ver qué pasa...
+
+```{r}
+ggplot() +
+        geom_sf(data=radios_delitos, 
+                color=NA,
+                aes(fill=n_delitos)) + 
+        scale_fill_viridis_c() + 
+        theme_minimal()
+
+```
+
+
+Ahora bien, pareciera que los radios con mayor cantidad de delitos son los que se encuentran en el centro de la ciudad o en zonas de alta población. Por ello, creemos una medida de "delitos / habitantes" para controlar este factor y aprovechemos para calcular una variable de densidad poblacional:
+
+```{r}
+radios_delitos <- radios_delitos %>%
+        mutate(n_delitos_hab= n_delitos / POBLACION,
+               dens_pob=POBLACION/AREA_KM2)
+```
+
+
+Y veamos ahora el plot...
+
+
+```{r}
+ggplot() +
+        geom_sf(data=radios_delitos, 
+                color=NA,
+                aes(fill=n_delitos_hab)) + 
+        scale_fill_viridis_c() + 
+        theme_minimal()
+
+```
+
+Ahora la cosa parece bastante más homgénea... pero porque tenemos un caso muy raro. Vamos a truncar los valores a un máximo
+
+
+```{r}
+radios_delitos <- radios_delitos %>%
+        mutate(n_delitos_hab = ifelse(n_delitos_hab >=0.6, 0.6, n_delitos_hab))
+
+```
+
+
+```{r}
+radios_delitos %>%
+ggplot() +
+        geom_sf( 
+                color=NA,
+                aes(fill=n_delitos_hab)) + 
+        scale_fill_viridis_c() + 
+        theme_minimal()
+```
+
+
+### Consigna
+* Agregar al objeto `radios_delitos` columnas que cuenten para cada radio cada uno de los tipos de delitos en el objeto `delito. Nombrar las variables resultantes de la siguiente forma:
+
+* hom_doloso
+* hom_segvial
+* hurto_sv
+* hurto_auto
+* les_segvial
+* robo_v
+* robo_auto
+
+
+```{r}
+radios_delitos <- delitos_radio %>%
+        group_by(RADIO_ID, tipo_delito) %>%
+        summarize(n=n()) %>%
+        spread(key = tipo_delito, value = n) %>%
+        left_join(x=radios_delitos) %>%
+        replace(., is.na(.), 0) %>%
+        rename(hom_doloso='Homicidio Doloso',
+               hom_segvial='Homicidio Seg Vial',
+               robo_noviol='Hurto (Sin violencia)',
+               hurto_auto = 'Hurto Automotor',
+               les_segvial='Lesiones Seg Vial',
+               robo_viol='Robo (Con violencia)',
+               robo_auto='Robo Automotor'
+               )
+
+```
+
+Y ordenamos un poco el dataset...
+
+```{r}
+
+radios_delitos<- radios_delitos %>%
+        mutate(homicidio = hom_doloso + hom_segvial,
+               robo_automovil = hurto_auto + robo_auto) %>%
+        select(-hom_doloso, -hom_segvial, -hurto_auto, -robo_auto)
+        
+```
+
+
+* Generemos una variable con la proporción de Hogares NBI
+
+
+```{r, highlight=TRUE, prompt=TRUE, strip.white=FALSE, collapse=TRUE, tidy=TRUE}
+
+radios_delitos <- radios_delitos %>%
+        mutate(p_hognbi= HOGARES_NBI / HOGARES * 100)
+```
+
+
+## Introducción a la regresión lineal en R
+Todos nos acordamos del modelo lineal:
+
+$$Y_{i}=\beta_{0} + \beta_{1}*X_{i} + \epsilon_{i}$$
+
+* Los parámetros del modelo son muy fáciles de interpretar:
+
+$\beta_{0}$ es el intercepto
+
+$\beta_{1}$ es la pendiente de la variable $X$; es decir el efecto medio en $Y$ cuando $X$ se incrementa en una unidad (y todo lo demás, se mantiene constante)
+
+$\epsilon_{i}$ es el error o residuo de estimación
+
+En un modelo lineal buscamos "minimizar" una determinada métrica de error. En particular, buscamos hacer mínimo el error cuadrático medio (MSE):
+
+$$MSE=\frac{1}{n}\sum_{i=1}^{n}(Y_{i}-\hat{Y_{i}})^2$$
+
+
+## Implementación en R ``lm()``
+Para implementar en R una regresión lineal simple usamos la función ``lm()``
+* ``formula``: una expresión con la siguiente forma: ``y~x``
+* ``data``: dataframe o datamatrix a utilizar
+* ``subset``: un vector que define un subconjunto de datos a usar en el modelo
+* ``weights``: vector que define pesos para la regresión (WLNS)
+
+
+```{r, highlight=TRUE, prompt=TRUE, strip.white=FALSE, collapse=TRUE, tidy=TRUE}
+
+model <- lm(formula = robo_automovil~p_hognbi, data=radios_delitos)
+
+```
+
+
+Si imprimimos el modelo... solamente nos da una información básica: el intercepto y el valor de la pendiente.
+
+```{r, highlight=TRUE, prompt=TRUE, strip.white=FALSE, collapse=TRUE, tidy=TRUE}
+summary(model)
+```
+Ahora tenemos acceso a mucha más información:
+* p-valores y errores estándar de los coeficientes. ¿Son significativos?
+* $R^2$: menos del 1% de la variancia de la variable dependiente es explicada por el modelo
+        
+```{r, highlight=TRUE, prompt=TRUE, strip.white=FALSE, collapse=TRUE, tidy=TRUE}
+names(model)
+```
+
+Usamos la función ``names`` para acceder a los objetos dentro del objeto ``model``. Luego, podemos ir usando los nombres para acceder a los diferentes elementos.
+
+
+```{r, highlight=TRUE, prompt=TRUE, strip.white=FALSE, collapse=TRUE, tidy=TRUE}
+model$coefficients
+```
+
+## Implementación en R ``lm()``: Algunas funciones útiles:
+
+Obtenemos intervalos de confianza de los parámetros del modelo.
+
+```{r, highlight=TRUE, prompt=TRUE, strip.white=FALSE, collapse=TRUE, tidy=TRUE}
+coef(model)
+confint(model,level=0.95)
+```
+
+Veamos la función ``predict()``
+
+```{r, highlight=TRUE, prompt=TRUE, strip.white=FALSE, collapse=TRUE, tidy=TRUE}
+predict(model, data.frame(p_hognbi = c(5,10,50), interval = "prediction"))
+```
+
+
+ *%% ARRANCAR DESDE ACA %%*
+ 
+Es decir, que para si la variable independiente ``lstat`` presentara los valores 5, 10 y 15, la variable dependiente ``medv`` presentaría esos valores (en la media).
+
+Grafiquemos, ahora, todo.
+
+```{r, fig.width=4, fig.height=3.5}
+plot(log(Boston$lstat),Boston$medv,
+     xlab = "Log del % de hogares con NES bajo", 
+     ylab = "Valor Mediano de las Viviendas", 
+     col = "red", 
+     pch = 20)
+abline(model, col="blue")
+```
+
+Generemos un modelo, ahora, que contenga todas las variables del dataset. Veamos, primero, la correlación entre varias variables: 
+
+```{r, highlight=TRUE, prompt=TRUE, strip.white=FALSE, collapse=TRUE, tidy=TRUE}
+cor(Boston[,10:14])
+```
+
+La función ``cor`` tiene varios argumentos
+* ``x``, ``y``: las variables (si todas son cuantitativas podemos pasar todo el dataframe)
+* ``method``: qué coeficiente(s) se va(n) a usar... ¿Pearson, Spearmen o Kenndall)?
+
+Mucho mejor es verlo en una matriz de gráficos...
+``````{r, fig.width=4, fig.height=3.5}
+pairs(Boston[,10:14])
+```
+
+Implementemos un modelo con todas las variables
+```{r, highlight=TRUE, prompt=TRUE, strip.white=FALSE, collapse=TRUE, tidy=TRUE}
+model <- lm(medv~., data = Boston)
+summary(model)
+```
+
+Pero momento... habíamos precisado en el primer modelo que ``lstat`` entraba en forma logarítmica...
+
+```{r, highlight=TRUE, prompt=TRUE, strip.white=FALSE, collapse=TRUE, tidy=TRUE}
+model <- lm(medv~.-lstat + log(lstat), data = Boston)
+summary(model)
+```
+
+
+## Implementación en R ``lm()``: multicolinealidad
+Vamos a analizar la multicolinealidad entre los predictores. Usaremos la función ``vif()`` del paquete ``car``
+
+```{r, highlight=TRUE, prompt=TRUE, strip.white=FALSE, collapse=TRUE, tidy=TRUE}
+library(car)
+vif(model)
+```
+
+Pareciera que ``tax`` y ``rad`` están muy correlacionadas con al menos un predictor. Entonces, podríamos reestimar el modelo eliminándolas.
+
+```{r, highlight=TRUE, prompt=TRUE, strip.white=FALSE, collapse=TRUE, tidy=TRUE}
+model <- lm(medv~.-lstat + log(lstat) -tax -rad, data = Boston)
+```
+
+## Implementación en R ``lm()``: interacciones 
+
+Supongamos que quisiéramos agregar alguna interacción podemos hacerlo con la siguiente sintaxis ``log(lstat)*age`` que agrega tanto los términos de interacción como los efectos de cada variable por separado. 
+
+Si quisiéramos introducir solamente la interacción deberíamos usar ``log(lstat)*age``
+```{r, highlight=TRUE, prompt=TRUE, strip.white=FALSE, collapse=TRUE, tidy=TRUE}
+mod<-lm(medv ~ log(lstat)*age, data=Boston)
+model <- lm(medv ~ log(lstat)*age, data = Boston)
+mod
+model
+```
+

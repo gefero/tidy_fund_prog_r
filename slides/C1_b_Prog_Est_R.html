@@ -55,7 +55,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
   <p class="author">
 Dr. Germán Rosati (CONICET - UNSAM - UNTREF)
   </p>
-  <p class="date">12 marzo, 2019</p>
+  <p class="date">13 marzo, 2019</p>
 </div>
 <div id="las-cinco-instrucciones-basicas-de-dplyr" class="slide section level2">
 <h2>Las cinco instrucciones básicas de <code>dplyr</code></h2>
@@ -90,20 +90,20 @@ Dr. Germán Rosati (CONICET - UNSAM - UNTREF)
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="op">&gt;</span><span class="st"> </span>f &lt;-<span class="st"> </span><span class="kw">filter</span>(delitos, 
 <span class="op">+</span><span class="st">             </span>comuna<span class="op">==</span><span class="st">'Comuna 6'</span> <span class="op">|</span><span class="st"> </span>comuna<span class="op">==</span><span class="st">'Comuna 10'</span>)
 <span class="op">&gt;</span><span class="st"> </span><span class="kw">head</span>(f)
-##       id    comuna          barrio  latitud longitud      fecha     hora
-## 1    616 Comuna 10 VELEZ SARSFIELD -34.6357 -58.4938 2017-12-01 13:30:00
-## 2 178548  Comuna 6       CABALLITO -34.6084 -58.4386 2016-05-21 20:00:00
-## 3 140888 Comuna 10 VELEZ SARSFIELD -34.6369 -58.4928 2016-06-20 10:40:00
-## 4  56149  Comuna 6       CABALLITO -34.6128 -58.4402 2017-05-04 16:00:00
-## 5 176953  Comuna 6       CABALLITO -34.6215 -58.4413 2016-04-28 22:00:00
-## 6  98057 Comuna 10      VILLA REAL -34.6156 -58.5269 2017-09-19 19:30:00
+##       id    comuna       barrio  latitud longitud      fecha     hora
+## 1  71262  Comuna 6    CABALLITO -34.6053 -58.4595 2017-07-15 17:45:00
+## 2 111699  Comuna 6    CABALLITO -34.6251 -58.4279 2017-01-06 21:00:00
+## 3 132670 Comuna 10   VILLA REAL -34.6261 -58.5294 2016-11-12 23:05:00
+## 4   6800 Comuna 10 MONTE CASTRO -34.6239 -58.5155 2017-01-12 21:40:00
+## 5 181878  Comuna 6    CABALLITO -34.6124 -58.4353 2016-04-22 15:00:00
+## 6  46787 Comuna 10     FLORESTA -34.6354 -58.4803 2017-01-29 03:55:00
 ##          uso_arma uso_moto lugar origen_dato           tipo_delito
-## 1 SIN USO DE ARMA SIN MOTO    NA          NA  Robo (Con violencia)
+## 1 SIN USO DE ARMA SIN MOTO    NA          NA     Lesiones Seg Vial
 ## 2 SIN USO DE ARMA SIN MOTO    NA          NA Hurto (Sin violencia)
 ## 3 SIN USO DE ARMA SIN MOTO    NA          NA  Robo (Con violencia)
 ## 4 SIN USO DE ARMA SIN MOTO    NA          NA  Robo (Con violencia)
-## 5 SIN USO DE ARMA SIN MOTO    NA          NA       Hurto Automotor
-## 6 SIN USO DE ARMA SIN MOTO    NA          NA Hurto (Sin violencia)
+## 5 SIN USO DE ARMA SIN MOTO    NA          NA  Robo (Con violencia)
+## 6 SIN USO DE ARMA SIN MOTO    NA          NA  Robo (Con violencia)
 ##   cantidad_vehiculos cantidad_victimas
 ## 1                  0                 0
 ## 2                  0                 0
@@ -130,6 +130,7 @@ Dr. Germán Rosati (CONICET - UNSAM - UNTREF)
 <p>Seleccionemos los registros que ocurrieron en diciembre y enero</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">filter</span>(delitos, <span class="kw">month</span>(<span class="kw">ymd</span>(fecha)) <span class="op">==</span><span class="st"> </span><span class="dv">1</span> <span class="op">|</span><span class="st"> </span><span class="kw">month</span>(<span class="kw">ymd</span>(fecha)) <span class="op">==</span><span class="st"> </span><span class="dv">12</span>)</code></pre></div>
 <p>Otra forma:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">filter</span>(delitos, <span class="kw">month</span>(<span class="kw">ymd</span>(fecha)) <span class="op">%in%</span><span class="st"> </span><span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">12</span>))</code></pre></div>
 </div>
 <div id="filtrando-filas-con-filter-4" class="slide section level2">
 <h2>Filtrando filas con <code>filter()</code></h2>
@@ -183,19 +184,19 @@ Dr. Germán Rosati (CONICET - UNSAM - UNTREF)
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="op">&gt;</span><span class="st"> </span>
 <span class="er">&gt;</span><span class="st"> </span>f&lt;-<span class="kw">arrange</span>(delitos, comuna, <span class="kw">ymd</span>(fecha), <span class="kw">hms</span>(hora))
 <span class="op">&gt;</span><span class="st"> </span><span class="kw">head</span>(f)
-##       id   comuna       barrio  latitud longitud      fecha     hora
-## 1 223126 Comuna 1 CONSTITUCION -34.6256 -58.3834 2016-01-03 01:30:00
-## 2 221052 Comuna 1       RETIRO -34.5915 -58.3861 2016-01-04 12:30:00
-## 3 226643 Comuna 1  SAN NICOLAS -34.5996 -58.3774 2016-01-04 17:30:00
-## 4 236930 Comuna 1    SAN TELMO -34.6183 -58.3671 2016-01-06 09:30:00
-## 5 233069 Comuna 1       RETIRO -34.5878 -58.3723 2016-01-07 15:00:00
-## 6 235737 Comuna 1    SAN TELMO -34.6218 -58.3704 2016-01-08 10:00:00
+##       id   comuna      barrio  latitud longitud      fecha     hora
+## 1 225476 Comuna 1  MONTSERRAT -34.6085 -58.3798 2016-01-02 11:00:00
+## 2 233090 Comuna 1  MONTSERRAT -34.6156 -58.3722 2016-01-03 17:00:00
+## 3 244996 Comuna 1 SAN NICOLAS -34.6003 -58.3820 2016-01-03 11:00:00
+## 4 228604 Comuna 1  MONTSERRAT -34.6157 -58.3759 2016-01-03 02:00:00
+## 5 226564 Comuna 1 SAN NICOLAS -34.6008 -58.3787 2016-01-04 23:00:00
+## 6 239320 Comuna 1 SAN NICOLAS -34.6080 -58.3743 2016-01-04 21:00:00
 ##          uso_arma uso_moto lugar origen_dato           tipo_delito
-## 1 SIN USO DE ARMA SIN MOTO    NA          NA  Robo (Con violencia)
+## 1 SIN USO DE ARMA SIN MOTO    NA          NA Hurto (Sin violencia)
 ## 2 SIN USO DE ARMA SIN MOTO    NA          NA Hurto (Sin violencia)
 ## 3 SIN USO DE ARMA SIN MOTO    NA          NA  Robo (Con violencia)
-## 4 SIN USO DE ARMA SIN MOTO    NA          NA  Robo (Con violencia)
-## 5 SIN USO DE ARMA SIN MOTO    NA          NA  Robo (Con violencia)
+## 4 SIN USO DE ARMA SIN MOTO    NA          NA Hurto (Sin violencia)
+## 5 SIN USO DE ARMA SIN MOTO    NA          NA Hurto (Sin violencia)
 ## 6 SIN USO DE ARMA SIN MOTO    NA          NA Hurto (Sin violencia)
 ##   cantidad_vehiculos cantidad_victimas
 ## 1                  0                 0
@@ -213,20 +214,20 @@ Dr. Germán Rosati (CONICET - UNSAM - UNTREF)
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="op">&gt;</span><span class="st"> </span>
 <span class="er">&gt;</span><span class="st"> </span>f&lt;-<span class="kw">arrange</span>(delitos, comuna, <span class="kw">desc</span>(<span class="kw">ymd</span>(fecha)), <span class="kw">desc</span>(<span class="kw">hms</span>(hora)))
 <span class="op">&gt;</span><span class="st"> </span><span class="kw">head</span>(f)
-##       id   comuna        barrio  latitud longitud      fecha     hora
-## 1 121374 Comuna 1        RETIRO -34.5911 -58.3735 2017-12-30 20:00:00
-## 2  51832 Comuna 1    MONTSERRAT -34.6150 -58.3760 2017-12-30 04:00:00
-## 3 121244 Comuna 1     SAN TELMO -34.6181 -58.3703 2017-12-30 23:10:00
-## 4 121379 Comuna 1        RETIRO -34.5895 -58.3724 2017-12-30 11:00:00
-## 5 111328 Comuna 1   SAN NICOLAS -34.6014 -58.3839 2017-12-28 22:15:00
-## 6  75333 Comuna 1 PUERTO MADERO -34.6239 -58.3655 2017-12-28 20:30:00
+##       id   comuna       barrio  latitud longitud      fecha     hora
+## 1 121316 Comuna 1  SAN NICOLAS -34.6036 -58.3811 2017-12-30 08:30:00
+## 2  93631 Comuna 1 CONSTITUCION -34.6227 -58.3915 2017-12-25 18:00:00
+## 3 121282 Comuna 1  SAN NICOLAS -34.6079 -58.3722 2017-12-23 16:15:00
+## 4 111245 Comuna 1   MONTSERRAT -34.6125 -58.3748 2017-12-21 18:30:00
+## 5 105684 Comuna 1  SAN NICOLAS -34.6078 -58.3893 2017-12-20 13:30:00
+## 6 105373 Comuna 1    SAN TELMO -34.6243 -58.3727 2017-12-20 11:45:00
 ##          uso_arma uso_moto lugar origen_dato           tipo_delito
 ## 1 SIN USO DE ARMA SIN MOTO    NA          NA Hurto (Sin violencia)
-## 2 SIN USO DE ARMA SIN MOTO    NA          NA  Robo (Con violencia)
+## 2 SIN USO DE ARMA SIN MOTO    NA          NA Hurto (Sin violencia)
 ## 3 SIN USO DE ARMA SIN MOTO    NA          NA Hurto (Sin violencia)
 ## 4 SIN USO DE ARMA SIN MOTO    NA          NA Hurto (Sin violencia)
 ## 5 SIN USO DE ARMA SIN MOTO    NA          NA Hurto (Sin violencia)
-## 6 SIN USO DE ARMA SIN MOTO    NA          NA     Lesiones Seg Vial
+## 6 SIN USO DE ARMA SIN MOTO    NA          NA Hurto (Sin violencia)
 ##   cantidad_vehiculos cantidad_victimas
 ## 1                  0                 0
 ## 2                  0                 0
@@ -248,39 +249,39 @@ Dr. Germán Rosati (CONICET - UNSAM - UNTREF)
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="op">&gt;</span><span class="st"> </span>f&lt;-<span class="kw">select</span>(delitos, comuna, barrio, tipo_delito) <span class="co"># Selección por nombre</span>
 <span class="op">&gt;</span><span class="st"> </span><span class="kw">head</span>(f)
 ##           comuna           barrio           tipo_delito
-## 106729  Comuna 5          ALMAGRO       Hurto Automotor
-## 60793   Comuna 7 PARQUE CHACABUCO Hurto (Sin violencia)
-## 222666  Comuna 1        SAN TELMO        Robo Automotor
-## 160595 Comuna 15     VILLA CRESPO     Lesiones Seg Vial
-## 149525 Comuna 10  VELEZ SARSFIELD  Robo (Con violencia)
-## 182967 Comuna 14          PALERMO Hurto (Sin violencia)
+## 100019  Comuna 7 PARQUE CHACABUCO       Hurto Automotor
+## 15326   Comuna 7 PARQUE CHACABUCO  Robo (Con violencia)
+## 214486  Comuna 6        CABALLITO     Lesiones Seg Vial
+## 81343  Comuna 13           NUÃ‘EZ Hurto (Sin violencia)
+## 27828  Comuna 11 VILLA DEL PARQUE  Robo (Con violencia)
+## 175127  Comuna 2         RECOLETA Hurto (Sin violencia)
 <span class="op">&gt;</span><span class="st"> </span>
 <span class="er">&gt;</span><span class="st"> </span>f&lt;-<span class="kw">select</span>(delitos, comuna<span class="op">:</span>fecha) <span class="co"># Selección por rango de nombres</span>
 <span class="op">&gt;</span><span class="st"> </span><span class="kw">head</span>(f)
 ##           comuna           barrio  latitud longitud      fecha
-## 106729  Comuna 5          ALMAGRO -34.6077 -58.4282 2016-08-04
-## 60793   Comuna 7 PARQUE CHACABUCO -34.6373 -58.4466 2016-04-24
-## 222666  Comuna 1        SAN TELMO -34.6197 -58.3751 2017-08-19
-## 160595 Comuna 15     VILLA CRESPO -34.5948 -58.4443 2017-02-24
-## 149525 Comuna 10  VELEZ SARSFIELD -34.6357 -58.4938 2017-12-01
-## 182967 Comuna 14          PALERMO -34.5835 -58.4004 2017-04-21
+## 100019  Comuna 7 PARQUE CHACABUCO -34.6407 -58.4356 2016-08-25
+## 15326   Comuna 7 PARQUE CHACABUCO -34.6334 -58.4478 2016-11-15
+## 214486  Comuna 6        CABALLITO -34.6053 -58.4595 2017-07-15
+## 81343  Comuna 13           NUÃ‘EZ -34.5444 -58.4608 2016-06-22
+## 27828  Comuna 11 VILLA DEL PARQUE -34.6043 -58.4913 2016-12-07
+## 175127  Comuna 2         RECOLETA -34.5936 -58.3994 2017-03-14
 <span class="op">&gt;</span><span class="st"> </span>
 <span class="er">&gt;</span><span class="st"> </span>f&lt;-<span class="kw">select</span>(delitos, <span class="op">-</span>(comuna<span class="op">:</span>fecha)) <span class="co"># Selección de todas las columnas excepto las que están en el rango de nombres</span>
 <span class="op">&gt;</span><span class="st"> </span><span class="kw">head</span>(f)
 ##            id     hora        uso_arma uso_moto lugar origen_dato
-## 106729 187056 05:30:00 SIN USO DE ARMA SIN MOTO    NA          NA
-## 60793  170712 22:00:00 SIN USO DE ARMA SIN MOTO    NA          NA
-## 222666  23929 18:00:00 SIN USO DE ARMA SIN MOTO    NA          NA
-## 160595  74144 11:40:00 SIN USO DE ARMA SIN MOTO    NA          NA
-## 149525    616 13:30:00 SIN USO DE ARMA SIN MOTO    NA          NA
-## 182967 113316 22:18:00 SIN USO DE ARMA SIN MOTO    NA          NA
+## 100019 180592 06:30:00 SIN USO DE ARMA SIN MOTO    NA          NA
+## 15326  172065 23:45:00 SIN USO DE ARMA SIN MOTO    NA          NA
+## 214486  71262 17:45:00 SIN USO DE ARMA SIN MOTO    NA          NA
+## 81343  162107 13:00:00 SIN USO DE ARMA SIN MOTO    NA          NA
+## 27828  144965 21:00:00 SIN USO DE ARMA SIN MOTO    NA          NA
+## 175127  95313 16:30:00 SIN USO DE ARMA SIN MOTO    NA          NA
 ##                  tipo_delito cantidad_vehiculos cantidad_victimas
-## 106729       Hurto Automotor                  0                 0
-## 60793  Hurto (Sin violencia)                  0                 0
-## 222666        Robo Automotor                  0                 0
-## 160595     Lesiones Seg Vial                  0                 0
-## 149525  Robo (Con violencia)                  0                 0
-## 182967 Hurto (Sin violencia)                  0                 0</code></pre></div>
+## 100019       Hurto Automotor                  0                 0
+## 15326   Robo (Con violencia)                  0                 0
+## 214486     Lesiones Seg Vial                  0                 0
+## 81343  Hurto (Sin violencia)                  0                 0
+## 27828   Robo (Con violencia)                  0                 0
+## 175127 Hurto (Sin violencia)                  0                 0</code></pre></div>
 </div>
 <div id="seleccionando-columnas-con-select-1" class="slide section level2">
 <h2>Seleccionando columnas con <code>select()</code></h2>
@@ -301,26 +302,26 @@ Dr. Germán Rosati (CONICET - UNSAM - UNTREF)
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="op">&gt;</span><span class="st"> </span>f&lt;-<span class="kw">select</span>(delitos, comuna, barrio, tipo_delito, <span class="kw">everything</span>())
 <span class="op">&gt;</span><span class="st"> </span><span class="kw">head</span>(f)
 ##           comuna           barrio           tipo_delito     id  latitud
-## 106729  Comuna 5          ALMAGRO       Hurto Automotor 187056 -34.6077
-## 60793   Comuna 7 PARQUE CHACABUCO Hurto (Sin violencia) 170712 -34.6373
-## 222666  Comuna 1        SAN TELMO        Robo Automotor  23929 -34.6197
-## 160595 Comuna 15     VILLA CRESPO     Lesiones Seg Vial  74144 -34.5948
-## 149525 Comuna 10  VELEZ SARSFIELD  Robo (Con violencia)    616 -34.6357
-## 182967 Comuna 14          PALERMO Hurto (Sin violencia) 113316 -34.5835
+## 100019  Comuna 7 PARQUE CHACABUCO       Hurto Automotor 180592 -34.6407
+## 15326   Comuna 7 PARQUE CHACABUCO  Robo (Con violencia) 172065 -34.6334
+## 214486  Comuna 6        CABALLITO     Lesiones Seg Vial  71262 -34.6053
+## 81343  Comuna 13           NUÃ‘EZ Hurto (Sin violencia) 162107 -34.5444
+## 27828  Comuna 11 VILLA DEL PARQUE  Robo (Con violencia) 144965 -34.6043
+## 175127  Comuna 2         RECOLETA Hurto (Sin violencia)  95313 -34.5936
 ##        longitud      fecha     hora        uso_arma uso_moto lugar
-## 106729 -58.4282 2016-08-04 05:30:00 SIN USO DE ARMA SIN MOTO    NA
-## 60793  -58.4466 2016-04-24 22:00:00 SIN USO DE ARMA SIN MOTO    NA
-## 222666 -58.3751 2017-08-19 18:00:00 SIN USO DE ARMA SIN MOTO    NA
-## 160595 -58.4443 2017-02-24 11:40:00 SIN USO DE ARMA SIN MOTO    NA
-## 149525 -58.4938 2017-12-01 13:30:00 SIN USO DE ARMA SIN MOTO    NA
-## 182967 -58.4004 2017-04-21 22:18:00 SIN USO DE ARMA SIN MOTO    NA
+## 100019 -58.4356 2016-08-25 06:30:00 SIN USO DE ARMA SIN MOTO    NA
+## 15326  -58.4478 2016-11-15 23:45:00 SIN USO DE ARMA SIN MOTO    NA
+## 214486 -58.4595 2017-07-15 17:45:00 SIN USO DE ARMA SIN MOTO    NA
+## 81343  -58.4608 2016-06-22 13:00:00 SIN USO DE ARMA SIN MOTO    NA
+## 27828  -58.4913 2016-12-07 21:00:00 SIN USO DE ARMA SIN MOTO    NA
+## 175127 -58.3994 2017-03-14 16:30:00 SIN USO DE ARMA SIN MOTO    NA
 ##        origen_dato cantidad_vehiculos cantidad_victimas
-## 106729          NA                  0                 0
-## 60793           NA                  0                 0
-## 222666          NA                  0                 0
-## 160595          NA                  0                 0
-## 149525          NA                  0                 0
-## 182967          NA                  0                 0</code></pre></div>
+## 100019          NA                  0                 0
+## 15326           NA                  0                 0
+## 214486          NA                  0                 0
+## 81343           NA                  0                 0
+## 27828           NA                  0                 0
+## 175127          NA                  0                 0</code></pre></div>
 </div>
 <div id="seleccionando-columnas-con-select-3" class="slide section level2">
 <h2>Seleccionando columnas con <code>select()</code></h2>
@@ -330,26 +331,26 @@ Dr. Germán Rosati (CONICET - UNSAM - UNTREF)
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="op">&gt;</span><span class="st"> </span>
 <span class="er">&gt;</span><span class="st"> </span><span class="kw">head</span>(<span class="kw">rename</span>(delitos, <span class="dt">COMUNA=</span>comuna))
 ##            id    COMUNA           barrio  latitud longitud      fecha
-## 106729 187056  Comuna 5          ALMAGRO -34.6077 -58.4282 2016-08-04
-## 60793  170712  Comuna 7 PARQUE CHACABUCO -34.6373 -58.4466 2016-04-24
-## 222666  23929  Comuna 1        SAN TELMO -34.6197 -58.3751 2017-08-19
-## 160595  74144 Comuna 15     VILLA CRESPO -34.5948 -58.4443 2017-02-24
-## 149525    616 Comuna 10  VELEZ SARSFIELD -34.6357 -58.4938 2017-12-01
-## 182967 113316 Comuna 14          PALERMO -34.5835 -58.4004 2017-04-21
+## 100019 180592  Comuna 7 PARQUE CHACABUCO -34.6407 -58.4356 2016-08-25
+## 15326  172065  Comuna 7 PARQUE CHACABUCO -34.6334 -58.4478 2016-11-15
+## 214486  71262  Comuna 6        CABALLITO -34.6053 -58.4595 2017-07-15
+## 81343  162107 Comuna 13           NUÃ‘EZ -34.5444 -58.4608 2016-06-22
+## 27828  144965 Comuna 11 VILLA DEL PARQUE -34.6043 -58.4913 2016-12-07
+## 175127  95313  Comuna 2         RECOLETA -34.5936 -58.3994 2017-03-14
 ##            hora        uso_arma uso_moto lugar origen_dato
-## 106729 05:30:00 SIN USO DE ARMA SIN MOTO    NA          NA
-## 60793  22:00:00 SIN USO DE ARMA SIN MOTO    NA          NA
-## 222666 18:00:00 SIN USO DE ARMA SIN MOTO    NA          NA
-## 160595 11:40:00 SIN USO DE ARMA SIN MOTO    NA          NA
-## 149525 13:30:00 SIN USO DE ARMA SIN MOTO    NA          NA
-## 182967 22:18:00 SIN USO DE ARMA SIN MOTO    NA          NA
+## 100019 06:30:00 SIN USO DE ARMA SIN MOTO    NA          NA
+## 15326  23:45:00 SIN USO DE ARMA SIN MOTO    NA          NA
+## 214486 17:45:00 SIN USO DE ARMA SIN MOTO    NA          NA
+## 81343  13:00:00 SIN USO DE ARMA SIN MOTO    NA          NA
+## 27828  21:00:00 SIN USO DE ARMA SIN MOTO    NA          NA
+## 175127 16:30:00 SIN USO DE ARMA SIN MOTO    NA          NA
 ##                  tipo_delito cantidad_vehiculos cantidad_victimas
-## 106729       Hurto Automotor                  0                 0
-## 60793  Hurto (Sin violencia)                  0                 0
-## 222666        Robo Automotor                  0                 0
-## 160595     Lesiones Seg Vial                  0                 0
-## 149525  Robo (Con violencia)                  0                 0
-## 182967 Hurto (Sin violencia)                  0                 0</code></pre></div>
+## 100019       Hurto Automotor                  0                 0
+## 15326   Robo (Con violencia)                  0                 0
+## 214486     Lesiones Seg Vial                  0                 0
+## 81343  Hurto (Sin violencia)                  0                 0
+## 27828   Robo (Con violencia)                  0                 0
+## 175127 Hurto (Sin violencia)                  0                 0</code></pre></div>
 </div>
 <div id="transformando-columnas-con-mutate" class="slide section level2">
 <h2>Transformando columnas con <code>mutate()</code></h2>
@@ -364,26 +365,26 @@ Dr. Germán Rosati (CONICET - UNSAM - UNTREF)
 <span class="op">+</span><span class="st">           </span><span class="dt">year=</span><span class="kw">year</span>(<span class="kw">ymd</span>(fecha)))
 <span class="op">&gt;</span><span class="st"> </span><span class="kw">head</span>(f)
 ##       id    comuna           barrio  latitud longitud      fecha     hora
-## 1 187056  Comuna 5          ALMAGRO -34.6077 -58.4282 2016-08-04 05:30:00
-## 2 170712  Comuna 7 PARQUE CHACABUCO -34.6373 -58.4466 2016-04-24 22:00:00
-## 3  23929  Comuna 1        SAN TELMO -34.6197 -58.3751 2017-08-19 18:00:00
-## 4  74144 Comuna 15     VILLA CRESPO -34.5948 -58.4443 2017-02-24 11:40:00
-## 5    616 Comuna 10  VELEZ SARSFIELD -34.6357 -58.4938 2017-12-01 13:30:00
-## 6 113316 Comuna 14          PALERMO -34.5835 -58.4004 2017-04-21 22:18:00
+## 1 180592  Comuna 7 PARQUE CHACABUCO -34.6407 -58.4356 2016-08-25 06:30:00
+## 2 172065  Comuna 7 PARQUE CHACABUCO -34.6334 -58.4478 2016-11-15 23:45:00
+## 3  71262  Comuna 6        CABALLITO -34.6053 -58.4595 2017-07-15 17:45:00
+## 4 162107 Comuna 13           NUÃ‘EZ -34.5444 -58.4608 2016-06-22 13:00:00
+## 5 144965 Comuna 11 VILLA DEL PARQUE -34.6043 -58.4913 2016-12-07 21:00:00
+## 6  95313  Comuna 2         RECOLETA -34.5936 -58.3994 2017-03-14 16:30:00
 ##          uso_arma uso_moto lugar origen_dato           tipo_delito
 ## 1 SIN USO DE ARMA SIN MOTO    NA          NA       Hurto Automotor
-## 2 SIN USO DE ARMA SIN MOTO    NA          NA Hurto (Sin violencia)
-## 3 SIN USO DE ARMA SIN MOTO    NA          NA        Robo Automotor
-## 4 SIN USO DE ARMA SIN MOTO    NA          NA     Lesiones Seg Vial
+## 2 SIN USO DE ARMA SIN MOTO    NA          NA  Robo (Con violencia)
+## 3 SIN USO DE ARMA SIN MOTO    NA          NA     Lesiones Seg Vial
+## 4 SIN USO DE ARMA SIN MOTO    NA          NA Hurto (Sin violencia)
 ## 5 SIN USO DE ARMA SIN MOTO    NA          NA  Robo (Con violencia)
 ## 6 SIN USO DE ARMA SIN MOTO    NA          NA Hurto (Sin violencia)
 ##   cantidad_vehiculos cantidad_victimas hora_simple dia mes year
-## 1                  0                 0           5   4   8 2016
-## 2                  0                 0          22  24   4 2016
-## 3                  0                 0          18  19   8 2017
-## 4                  0                 0          11  24   2 2017
-## 5                  0                 0          13   1  12 2017
-## 6                  0                 0          22  21   4 2017</code></pre></div>
+## 1                  0                 0           6  25   8 2016
+## 2                  0                 0          23  15  11 2016
+## 3                  0                 0          17  15   7 2017
+## 4                  0                 0          13  22   6 2016
+## 5                  0                 0          21   7  12 2016
+## 6                  0                 0          16  14   3 2017</code></pre></div>
 </div>
 <div id="transformando-columnas-con-mutate-1" class="slide section level2">
 <h2>Transformando columnas con <code>mutate()</code></h2>
@@ -407,18 +408,18 @@ Dr. Germán Rosati (CONICET - UNSAM - UNTREF)
 ## # A tibble: 12 x 2
 ##    f        delay
 ##    &lt;ord&gt;    &lt;int&gt;
-##  1 &quot;ene\\.&quot;   434
-##  2 &quot;feb\\.&quot;   422
-##  3 &quot;mar\\.&quot;   440
-##  4 &quot;abr\\.&quot;   398
-##  5 &quot;may\\.&quot;   393
-##  6 &quot;jun\\.&quot;   380
-##  7 &quot;jul\\.&quot;   437
-##  8 &quot;ago\\.&quot;   419
-##  9 &quot;sep\\.&quot;   383
-## 10 &quot;oct\\.&quot;   433
-## 11 &quot;nov\\.&quot;   461
-## 12 &quot;dic\\.&quot;   400</code></pre></div>
+##  1 &quot;ene\\.&quot;   424
+##  2 &quot;feb\\.&quot;   378
+##  3 &quot;mar\\.&quot;   461
+##  4 &quot;abr\\.&quot;   430
+##  5 &quot;may\\.&quot;   467
+##  6 &quot;jun\\.&quot;   400
+##  7 &quot;jul\\.&quot;   361
+##  8 &quot;ago\\.&quot;   404
+##  9 &quot;sep\\.&quot;   412
+## 10 &quot;oct\\.&quot;   400
+## 11 &quot;nov\\.&quot;   467
+## 12 &quot;dic\\.&quot;   396</code></pre></div>
 </div>
 
   <!-- dynamically load mathjax for compatibility with self-contained -->

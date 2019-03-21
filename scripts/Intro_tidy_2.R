@@ -40,6 +40,17 @@ delitos %>%
         ggplot() + 
                 geom_line(aes(x=hora, y=tot, color=comuna))
 
+delitos %>% 
+        mutate(hora = hour(hms(hora))) %>%
+        select(hora, comuna) %>%
+        group_by(hora, comuna) %>%
+        summarise(tot=n()) %>%
+        ggplot() + 
+        geom_line(aes(x=hora, y=tot)) + 
+        facet_wrap(~comuna)
+
+
+delitos %>% select(comuna, barrio) %>% arrange(comuna) %>% unique()
 
 #' 
 #' 
