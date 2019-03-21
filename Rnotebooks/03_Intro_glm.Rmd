@@ -71,8 +71,8 @@ Ahora, vamos a hacer las cosas interesantes. La idea es poder realizar una opera
 ```{r}
 ggplot() + 
         geom_sf(data=radios_gral) + 
-        geom_sf(data=sample_n(delitos,1000)) + 
-        facet_grid(~tipo_delito)
+        geom_sf(data=sample_n(delitos,1000), aes(color=tipo_delito)) + 
+        facet_wrap(~tipo_delito)
 ```
 
 
@@ -180,7 +180,7 @@ radios_delitos <- delitos_radio %>%
         summarize(n=n()) %>%
         spread(key = tipo_delito, value = n) %>%
         left_join(x=radios_delitos) %>%
-        replace(., is.na(.), 0) %>%
+        replace(., is.na(.),0) %>%
         rename(hom_doloso='Homicidio Doloso',
                hom_segvial='Homicidio Seg Vial',
                robo_noviol='Hurto (Sin violencia)',
@@ -210,7 +210,8 @@ radios_delitos<- radios_delitos %>%
 ```{r, highlight=TRUE, prompt=TRUE, strip.white=FALSE, collapse=TRUE, tidy=TRUE}
 
 radios_delitos <- radios_delitos %>%
-        mutate(p_hognbi= HOGARES_NBI / HOGARES * 100)
+        mutate(p_hognbi= HOGARES_NBI / HOGARES * 100) %>%
+        replace_na(list(p_hognbi=0))
 ```
 
 
