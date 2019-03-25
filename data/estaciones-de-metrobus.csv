@@ -1,0 +1,223 @@
+long,lat,id,nombre,calle1,calle2,intersec,inaugura,lin_sent_n,lin_sent_s,metrobus
+-58.526112518066256,-34.638266694164287,1,Liniers,FRANCISCO DE VIEDMA,,Entre Casco y Gana,si,34 - 109 - 166,34 - 109 - 166,Metrobus Juan B. Justo
+-58.520143194533759,-34.633496924422751,2,Velez Sarsfield,JUSTO JUAN B.,ALVAREZ JONTE AV,JUSTO JUAN B. & ALVAREZ JONTE AV,si,34 - 99 - 166 - 172,34 - 99 - 166 - 172,Metrobus Juan B. Justo
+-58.513913101165812,-34.633457821061292,3,Polideportivo Velez Sarsfield,JUSTO JUAN B.,GARCIA JUAN AGUSTIN,JUSTO JUAN B. & GARCIA JUAN AGUSTIN,si,34 - 99 - 166 - 172,34 - 99 - 166 - 172,Metrobus Juan B. Justo
+-58.506729637790961,-34.634341077095115,4,Cortina,JUSTO JUAN B.,CORTINA,JUSTO JUAN B. & CORTINA,si,34 - 99 - 166 - 172,34 - 99 - 166 - 172,Metrobus Juan B. Justo
+-58.501042098776409,-34.632207786775169,5,Av. Lope de Vega,JUSTO JUAN B.,LOPE DE VEGA,JUSTO JUAN B. & LOPE DE VEGA,si,34 - 99 - 166 - 172,34 - 99 - 166 - 172,Metrobus Juan B. Justo
+-58.49485369658003,-34.629537275777722,6,Carrasco,JUSTO JUAN B.,CARRASCO,JUSTO JUAN B. & CARRASCO,si,34 - 99 - 166 - 172,34 - 99 - 166 - 172,Metrobus Juan B. Justo
+-58.49109564625963,-34.627011038280713,7,Av. Segurola,JUSTO JUAN B.,SEGUROLA,JUSTO JUAN B. & SEGUROLA,si,34 - 99 - 166 - 172,34 - 99 - 166 - 172,Metrobus Juan B. Justo
+-58.485924077445176,-34.625143829520979,8,Chivilcoy,JUSTO JUAN B.,CHIVILCOY,JUSTO JUAN B. & CHIVILCOY,si,34 - 166,34 - 166,Metrobus Juan B. Justo
+-58.480817643768582,-34.62204155975661,9,Concordia,JUSTO JUAN B.,CONCORDIA,JUSTO JUAN B. & CONCORDIA,si,34 - 166,34 - 166,Metrobus Juan B. Justo
+-58.476096333381605,-34.618102594928033,10,Av. Nazca,JUSTO JUAN B.,NAZCA,JUSTO JUAN B. & NAZCA,si,34 - 166,34 - 166,Metrobus Juan B. Justo
+-58.472255494384328,-34.613823969987052,11,Artigas,JUSTO JUAN B.,ARTIGAS JOSE GERVASIO GRAL,JUSTO JUAN B. & ARTIGAS JOSE GERVASIO GRAL,si,34 - 166,34 - 166,Metrobus Juan B. Justo
+-58.46784821579157,-34.611303822593023,12,Boyaca,JUSTO JUAN B.,BOYACA,JUSTO JUAN B. & BOYACA,si,34 - 110 - 166,34 - 110 - 166,Metrobus Juan B. Justo
+-58.462704631866444,-34.607373011852246,13,Av. Donato Alvarez,JUSTO JUAN B.,ALVAREZ DONATO Tte. Gral.,JUSTO JUAN B. & ALVAREZ DONATO Tte. Gral.,si,34 - 110 - 166,34 - 110 - 166,Metrobus Juan B. Justo
+-58.458473924997968,-34.604491845072424,14,Av. San Martín,JUSTO JUAN B.,SAN MARTIN AV.,JUSTO JUAN B. & SAN MARTIN AV.,si,34 - 109 - 110 - 166,34 - 109 - 110 - 166,Metrobus Juan B. Justo
+-58.452052278349043,-34.600120442667283,15,Av. Honorio Pueyrredón,JUSTO JUAN B.,PUEYRREDON HONORIO DR.,JUSTO JUAN B. & PUEYRREDON HONORIO DR.,si,34 - 109 - 166,34 - 109 - 166,Metrobus Juan B. Justo
+-58.447690103827632,-34.597091409563888,16,Murillo,JUSTO JUAN B.,MURILLO,JUSTO JUAN B. & MURILLO,si,34 - 166,34 - 166,Metrobus Juan B. Justo
+-58.44430015384696,-34.594764030761432,17,Av. Corrientes,JUSTO JUAN B.,CORRIENTES,JUSTO JUAN B. & CORRIENTES,si,34 - 166,34 - 166,Metrobus Juan B. Justo
+-58.440703018640058,-34.592266928589886,18,Aguirre,JUSTO JUAN B.,AGUIRRE,JUSTO JUAN B. & AGUIRRE,si,34 - 166,34 - 166,Metrobus Juan B. Justo
+-58.434753212275034,-34.585372194959099,20,Honduras,JUSTO JUAN B.,HONDURAS,JUSTO JUAN B. & HONDURAS,si,34 - 166,34 - 166,Metrobus Juan B. Justo
+-58.430041255397477,-34.581879684783154,21,Guatemala,JUSTO JUAN B.,GUATEMALA,JUSTO JUAN B. & GUATEMALA,si,34 - 166,34 - 166,Metrobus Juan B. Justo
+-58.426515354062616,-34.577583241440635,23,Pacífico,BULLRICH INT AV,SANTA FE,BULLRICH INT AV & SANTA FE,si,34 - 166,34 - 166,Metrobus Juan B. Justo
+-58.380854057239539,-34.618876714053805,27,Estados Unidos,AV. 9 DE JULIO,,Entre Carlos Calvo y Estados Unidos,si,10 -- 17 -- 59,59 -- 10 -- 17,Metrobus 9 de Julio
+-58.380882769127837,-34.617890477370551,28,Independencia,AV. 9 DE JULIO,,Entre Estados Unidos e Independencia,si,45 -- 70,45 -- 70,Metrobus 9 de Julio
+-58.380944992793843,-34.616679488313913,29,Chile,AV. 9 DE JULIO,,Entre Independencia y Chile,si,9 -- 91 -- 100,100 -- 9 -- 91,Metrobus 9 de Julio
+-58.380990528402691,-34.615509772959797,30,México,AV. 9 DE JULIO,,Entre Chile y México,si,67 -- 129,67 -- 98 -- 129,Metrobus 9 de Julio
+-58.381030356944962,-34.614500606940602,31,Venezuela,AV. 9 DE JULIO,,Entre México y Venezuela,si,10 -- 17 -- 59,59 -- 10 -- 17,Metrobus 9 de Julio
+-58.381042460193484,-34.613473073224057,32,Belgrano,AV. 9 DE JULIO,,Entre Venezuela y Belgrano,si,45 -- 70 -- 100,100 -- 45 -- 70,Metrobus 9 de Julio
+-58.381171727514044,-34.611070891371021,33,Alsina,AV. 9 DE JULIO,,Entre Moreno y Alsina,si,129,129,Metrobus 9 de Julio
+-58.381255566548958,-34.609944087864065,34,Yrigoyen,AV. 9 DE JULIO,,Entre Alsina e Hipólito Yrigoyen,si,9 -- 91 -- 67,67 -- 9 -- 91,Metrobus 9 de Julio
+-58.38139186616656,-34.607584608984197,35,Mitre,AV. 9 DE JULIO,,Entre Rivadavia y Bartolomé Mitre,si,10 -- 17 -- 59,59 -- 10 -- 17,Metrobus 9 de Julio
+-58.381458739779916,-34.606456815442229,36,Juan D. Perón,AV. 9 DE JULIO,,Entre Bartolomé Mitre y Perón,si,45 -- 70 -- 100,100 -- 45 -- 70,Metrobus 9 de Julio
+-58.381539420247655,-34.605377885884899,37,Obelisco Sur,AV. 9 DE JULIO,,Entre Juan D. Perón y Sarmiento,si,9 -- 67 -- 129,9 -- 67 -- 129,Metrobus 9 de Julio
+-58.381753557834337,-34.601725441982516,38,Obelisco Norte,AV. 9 DE JULIO,,Entre Lavalle y Tucumán,si,100 -- 17 -- 59,59 -- 100 -- 17,Metrobus 9 de Julio
+-58.381812310392924,-34.600580430029503,39,Teatro Colón,AV. 9 DE JULIO,,Entre Tucumán y Viamonte,si,45 -- 70 -- 10,10 -- 45 -- 70,Metrobus 9 de Julio
+-58.381855052295151,-34.599427467261847,40,Córdoba,AV. 9 DE JULIO,,Entre Viamonte y Av Córdoba,si,9 -- 67,67 -- 9,Metrobus 9 de Julio
+-58.381895022230239,-34.59825315730383,41,Paraguay,AV. 9 DE JULIO,,Entre Av Córdoba y Paraguay,si,10 -- 17 -- 59,59 -- 10 -- 17,Metrobus 9 de Julio
+-58.382001519434404,-34.597120176396587,42,Marcelo T. de Alvear,AV. 9 DE JULIO,,Entre Paraguay y Marcelo T. de Alvear,si,129,129,Metrobus 9 de Julio
+-58.382130340180176,-34.595845005054031,43,Santa Fe,AV. 9 DE JULIO,,Entre Marcelo T. de Alvear y Av. Santa Fe,si,100 -- 70 -- 67,100 -- 70 -- 67,Metrobus 9 de Julio
+-58.381008468083756,-34.627438735467173,44,Constitución,BRASIL AV,LIMA,BRASIL AV & LIMA,si,,,Metrobus Sur
+-58.391552309227542,-34.62725708862979,45,Combate de los Pozos,GARAY JUAN DE AV,,Entre Combate de los Pozos y Entre Ríos,si,,4 - 143,Metrobus Sur - Ramal Fernández de la Cruz
+-58.396064722716744,-34.627956126672636,46,Pichincha,GARAY JUAN DE AV,,Entre Pasco y Pichincha,si,,4 - 143,Metrobus Sur - Ramal Fernández de la Cruz
+-58.40084287911575,-34.62866411058269,47,Jujuy,GARAY JUAN DE AV,,Entre jujuy y Alberti,si,,4 - 143,Metrobus Sur - Ramal Fernández de la Cruz
+-58.407223822587575,-34.631179689713761,48,La Rioja,CHICLANA AV,,Entre La rioja y Gral Urquiza,si,,143,Metrobus Sur - Ramal Fernández de la Cruz
+-58.41027380640368,-34.633708221952965,49,Sánchez de Loria,CHICLANA AV,,Entre 24 de Noviembre y Sánchez de Loria,si,,143,Metrobus Sur - Ramal Fernández de la Cruz
+-58.41528113186493,-34.636940191422006,50,Boedo,CHICLANA AV,,Entre Álzaga y Boedo,si,,101 - 143,Metrobus Sur - Ramal Fernández de la Cruz
+-58.419324741160516,-34.640039707195875,51,Caseros,FERNANDEZ DE LA CRUZ AV,,Entre Caseros y Trole,si,23 - 101 - 143,,Metrobus Sur - Ramal Fernández de la Cruz
+-58.423180124457417,-34.643101353896697,52,Av La Plata,FERNANDEZ DE LA CRUZ AV,,Entre Gual y Riestra,si,23 - 101 - 143,101 - 143,Metrobus Sur - Ramal Fernández de la Cruz
+-58.427938197877616,-34.647532191505853,53,Del Barco Centenera,FERNANDEZ DE LA CRUZ AV,,Entre Lanza y Del Barco Centenera,si,101 - 143,101 - 143 - 150,Metrobus Sur - Ramal Fernández de la Cruz
+-58.431168509276326,-34.650357234100163,54,Perito Moreno,FERNANDEZ DE LA CRUZ AV,,Entre Mom y Erezcano,si,101 - 143 -150,46 - 101 - 143 - 150,Metrobus Sur - Ramal Fernández de la Cruz
+-58.434492081082482,-34.653047727547957,55,San Lorenzo,FERNANDEZ DE LA CRUZ AV,,Entre Charrua y Berg,si,46 - 101 - 143 -150,46 - 101 - 143 - 150,Metrobus Sur - Ramal Fernández de la Cruz
+-58.438187334694128,-34.655316570976602,56,Varela,FERNANDEZ DE LA CRUZ AV,,Entre Pedernera y Castañares,si,,101 - 143 - 150,Metrobus Sur - Ramal Fernández de la Cruz
+-58.442441675716132,-34.659312413384825,57,Lafuente,FERNANDEZ DE LA CRUZ AV,,Entre San Pedrito y José Martí,si,23 - 76 - 101 - 143 - 150,23 - 76 - 101 - 143 -150,Metrobus Sur - Ramal Fernández de la Cruz
+-58.449044033438966,-34.664327654211384,58,Laguna,FERNANDEZ DE LA CRUZ AV,,Entre Laguna y Lacarra,si,101 - 143 -  150,101 - 143 -  150,Metrobus Sur - Ramal Fernández de la Cruz
+-58.454717064097508,-34.669188780628858,59,Cecilia Grierson,FERNANDEZ DE LA CRUZ AV,,Entre Lacarra y Escalada,si,101 - 143 -  150,101 - 143 -  150,Metrobus Sur - Ramal Fernández de la Cruz
+-58.461902301779901,-34.675586612353236,60,Escalada,FERNANDEZ DE LA CRUZ AV,,Entre Escalada y Pola,si,101 - 114 - 143 - 150,101 - 114 - 143 - 150,Metrobus Sur - Ramal Fernández de la Cruz
+-58.465506967272127,-34.678910244025673,61,Pola,FERNANDEZ DE LA CRUZ AV,,Entre Founrouge y Larraya,si,101 - 114 - 143 - 150,101 - 114 - 143 - 150,Metrobus Sur - Ramal Fernández de la Cruz
+-58.472301905206528,-34.684829145792435,62,Lisandro de la Torre,FERNANDEZ DE LA CRUZ AV,,Fernández de la Cruz y Lisandro de la Torre,si,36 - 143,36 - 143,Metrobus Sur - Ramal Fernández de la Cruz
+-58.475702268378924,-34.687900832831644,63,Piedrabuena,FERNANDEZ DE LA CRUZ AV,,Entre Piedrabuena y Guaminí,si,36 - 143 - 150,36 - 143 - 150,Metrobus Sur - Ramal Fernández de la Cruz
+-58.476862728904635,-34.688946828482749,64,Montiel,FERNANDEZ DE LA CRUZ AV,,Fernández de la Cruz y Montiel,si,36 - 143,36 - 143,Metrobus Sur - Ramal Fernández de la Cruz
+-58.478081472355278,-34.690053800220106,65,José L. Suárez,FERNANDEZ DE LA CRUZ AV,,Entre Saladillo y José León Suárez,si,36 - 143,36 - 143,Metrobus Sur - Ramal Fernández de la Cruz
+-58.461808971066944,-34.704519695595486,66,Puente La Noria,GRAL. PAZ AV.,27 DE FEBRERO AV,GRAL. PAZ AV & 27 DE FEBRERO AV,si,,,Metrobus Sur
+-58.469764439913746,-34.697795350077044,67,Gral Paz,ROCA CNEL AV,,Roca Cnel y Gral Paz,si,91 - 101 - 114 - 117 - 141,91 - 101 - 114 - 117 - 141,Metrobus Sur - Ramal Coronel Roca
+-58.467391622760587,-34.695622443771668,68,Guaminí,ROCA CNEL AV,,Entre Guaminí y Montiel,si,91 - 101 - 114 - 117 - 141,91 - 101 - 114 - 117 - 141,Metrobus Sur - Ramal Coronel Roca
+-58.466333677660003,-34.694651871845352,69,Piedrabuena,ROCA CNEL AV,,Entre Piedrabuena y Guaminí,si,91 - 101 - 114 - 117,91 - 101 - 114 - 117,Metrobus Sur - Ramal Coronel Roca
+-58.463570056554786,-34.692141209765929,70,Lisandro de la Torre,ROCA CNEL AV,,Entre Lisandro de la Torre y Timoteo Gordillo,si,47 - 91 - 114 - 117 -150,47 - 91 - 114 - 117,Metrobus Sur - Ramal Coronel Roca
+-58.457429218439401,-34.686137182448178,71,Larrazábal,ROCA CNEL AV,,Entre Pasaje Roca y Larrazábal,si,,91 - 115,Metrobus Sur - Ramal Coronel Roca
+-58.453087788369096,-34.682502523494392,72,Escalada,ROCA CNEL AV,,Entre Escalada y Pasaje Roca,si,91 - 115,91 - 115,Metrobus Sur - Ramal Coronel Roca
+-58.4481350991623,-34.676354221620102,73,Estadio Parque Roca,ROCA CNEL AV,,Entre Escalada y Lacarra,si,91 - 115,91 - 115,Metrobus Sur - Ramal Coronel Roca
+-58.445391865620181,-34.672011967967769,74,Parque Roca,ROCA CNEL AV,,Entre Escalada y Lacarra,si,91 - 115,91 - 115,Metrobus Sur - Ramal Coronel Roca
+-58.440416957373451,-34.666458909393093,75,Mariano Acosta,ROCA CNEL AV,,Entre Pergamino y Mariano Acosta,si,91 - 115,91 - 115,Metrobus Sur - Ramal Coronel Roca
+-58.442346502844686,-34.668188321968366,76,Lacarra,ROCA CNEL AV,,Entre Mariano Acosta y Lacarra,si,91 - 115,91 - 115,Metrobus Sur - Ramal Coronel Roca
+-58.437150966263893,-34.663396169033163,77,Lafuente,RABANAL AV,,Entre San Pedrito y José Martí,si,,91 - 115,Metrobus Sur - Ramal Coronel Roca
+-58.43301344309652,-34.661499053240021,78,Varela,RABANAL AV,,Entre Varela y Culpina,si,,76 - 91 - 115,Metrobus Sur - Ramal Coronel Roca
+-58.429548725573895,-34.659918700662395,79,Berg,RABANAL AV,,Entre Berg y Rivera Indarte,si,,76 - 91 - 115,Metrobus Sur - Ramal Coronel Roca
+-58.426359333723909,-34.658503088965823,80,Bonorino,RABANAL AV,,Entre Bonorino Esteban y Charrúa,si,,76 - 91 - 115,Metrobus Sur - Ramal Coronel Roca
+-58.421812350289251,-34.656305421841196,81,Vedia,RABANAL AV,,Rabanal y Vedia Agustín,si,,76 - 91 - 115,Metrobus Sur - Ramal Coronel Roca
+-58.417303847432272,-34.65495210583083,82,Sáenz,RABANAL AV,,Entre Sáenz y Del Barco Centenera,si,,76 - 91 - 115,Metrobus Sur - Ramal Coronel Roca
+-58.416366660214976,-34.651678935229995,83,Pompeya,SAENZ AV,,Entre Luppi y Lynch,si,91 - 115,91 - 115,Metrobus Sur - Ramal Coronel Roca
+-58.415747042585139,-34.647598156955318,84,Grito de Asencio,ALMAFUERTE AV,,Entre Famatina y Grito de Asencio,si,115,,Metrobus Sur - Ramal Coronel Roca
+-58.414183361160042,-34.645057418477954,85,José C. Paz,ALMAFUERTE AV,,Entre Andrés Ferreira y José C Paz,si,115,,Metrobus Sur - Ramal Coronel Roca
+-58.412867524183405,-34.642149886727935,86,Cortejarena,ALMAFUERTE AV,,Entre Puna y Chutro,si,115,,Metrobus Sur - Ramal Coronel Roca
+-58.410694027391088,-34.63629558372746,87,Bathurst,SANCHEZ DE LORIA AV,,Entre Cátulo Castillo y Rondeau,si,6 - 32,,Metrobus Sur - Ramal Coronel Roca
+-58.406685235321454,-34.633901709072504,89,La Rioja,BRASIL AV,,Entre La Rioja y Gral Urquiza,si,6 - 97 -143,,Metrobus Sur - Ramal Coronel Roca
+-58.400997466539785,-34.631774725411134,90,Jujuy,BRASIL AV,,Entre Jujuy y Catamarca,si,6 - 97 -143,,Metrobus Sur - Ramal Coronel Roca
+-58.395399668186073,-34.630204617071008,91,Garrahan,BRASIL AV,,Entre Pichincha y Combate de los Pozos,si,6 - 97 -143,,Metrobus Sur - Ramal Coronel Roca
+-58.392060919015499,-34.629583083863849,92,Entre Ríos,BRASIL AV,,Entre Pichincha y Combate de los Pozos,si,6 - 97 -143,,Metrobus Sur - Ramal Coronel Roca
+-58.461231785802276,-34.689972591925965,93,Soldado de la Frontera,ROCA CNEL AV,,Entre Soldado de la Frontera y Racedo,si,47 - 91 - 114 - 115 - 117 - 141 - 150,91 - 115,Metrobus Sur - Ramal Coronel Roca
+-58.437800559653766,-34.6556493390366,94,Varela,FERNANDEZ DE LA CRUZ AV,,Entre Pedernera y Castañares,si,23 - 76 - 101 - 143 - 150,,Metrobus Sur - Ramal Fernández de la Cruz
+-58.456992885332269,-34.686431234637929,95,Larrazábal,ROCA CNEL AV,,Entre Pasaje Roca y Larrazábal,si,91 - 115,,Metrobus Sur - Ramal Coronel Roca
+-58.436211001432341,-34.664350230766622,96,Lafuente,RABANAL AV,,Entre San Pedrito y José Martí,si,76 - 91 - 115,,Metrobus Sur - Ramal Coronel Roca
+-58.432315345703188,-34.662350037972772,97,Varela,RABANAL AV,,Entre Varela y Culpina,si,76 - 91 - 115,,Metrobus Sur - Ramal Coronel Roca
+-58.428996916774295,-34.660503246952374,98,Berg,RABANAL AV,,Entre Berg y Rivera Indarte,si,76 - 91 - 115,,Metrobus Sur - Ramal Coronel Roca
+-58.426067799094874,-34.658863910069819,99,Bonorino,RABANAL AV,,Entre Bonorino Esteban y Charrúa,si,76 - 91 - 115,,Metrobus Sur - Ramal Coronel Roca
+-58.421561538218135,-34.656709838063897,100,Vedia,RABANAL AV,,Rabanal y Vedia Agustín,si,76 - 91 - 115,,Metrobus Sur - Ramal Coronel Roca
+-58.417234026537677,-34.655141104177702,101,Sáenz,RABANAL AV,,Entre Sáenz y Del Barco Centenera,si,91 - 115,,Metrobus Sur - Ramal Coronel Roca
+-58.46116596623272,-34.556844402182371,102,Roosevelt,CABILDO AV,,Entre Roosvelt y Manuel Ugarte,si,41 - 57 - 60 - 194,,Metrobus Norte - Av Cabildo
+-58.462076906167631,-34.555889798698935,103,Ugarte,CABILDO AV,,Entre Manuel Ugarte y Av Congreso,si,59 - 68 - 133 - 152 - 161,,Metrobus Norte - Av Cabildo
+-58.462980234421792,-34.554954029308561,104,Congreso,CABILDO AV,,Entre Av Congreso y Quesada,si,29 - 60 - 168 - 184,,Metrobus Norte - Av Cabildo
+-58.463086507803688,-34.555016832422801,105,Congreso,CABILDO AV,,Entre Av Congreso y Quesada,si,,59 - 60 - 68 - 152 - 161,Metrobus Norte - Av Cabildo
+-58.464088495295819,-34.554011970591361,106,Quesada,CABILDO AV,,Entre Quesada e Iberá,si,,29 - 57- 133 - 168 - 184 - 194,Metrobus Norte - Av Cabildo
+-58.465394067364358,-34.552335097368761,107,Iberá,CABILDO AV,,Entre Guayra y Campos Salles,si,60,,Metrobus Norte - Av Cabildo
+-58.46476405825986,-34.553095031120357,108,Iberá,CABILDO AV,,Entre Iberá y Guayra,si,59 - 68 - 152 - 161,,Metrobus Norte - Av Cabildo
+-58.465955751071462,-34.551619124520478,109,Campos Salles,CABILDO AV,,Entre Campos Salles y Manuela Pedraza,si,29 - 133 - 168 - 184,,Metrobus Norte - Av Cabildo
+-58.466418765106496,-34.551292533404833,110,Manuela Pedraza,CABILDO AV,,Entre Manuela Pedraza y Juana Azurduy,si,,59 - 60 - 68 - 152,Metrobus Norte - Av Cabildo
+-58.467010792589825,-34.550526311893357,111,Juana Azurduy,CABILDO AV,,Entre Juana Azurduy y Núñez,si,,133 - 161 - 168 - 184,Metrobus Norte - Av Cabildo
+-58.467208119688479,-34.550030157490099,112,Núñez,CABILDO AV,,Entre Juana Azurduy y Núñez,si,59 - 60 - 68 - 133,,Metrobus Norte - Av Cabildo
+-58.467815314907433,-34.549314174129336,113,Núñez,CABILDO AV,,Entre Núñez y Crisólogo Larralde,si,152 - 161 - 168 - 184,,Metrobus Norte - Av Cabildo
+-58.468331419238716,-34.548654715023396,114,Crisólogo Larralde,CABILDO AV,,Entre Crisólogo Larralde y Av Comodoro Rivadavia,si,57 - 194,,Metrobus Norte - Av Cabildo
+-58.469325673163993,-34.54759956674301,115,Manzanares,CABILDO AV,,Entre Av García del Río y Manzanares,si,,57 - 59 - 60 - 68 - 133,Metrobus Norte - Av Cabildo
+-58.470161541762835,-34.546343340700403,116,Vilela,CABILDO AV,,Entre Paroissien y Vilela,si,59 - 68 - 152 - 161,,Metrobus Norte - Av Cabildo
+-58.47070227073884,-34.545617926072197,117,Besares,CABILDO AV,,Entre Vilela y Besares,si,60 - 133 - 168 - 184,,Metrobus Norte - Av Cabildo
+-58.471336818856237,-34.544936572911304,118,Ruiz Huidobro,CABILDO AV,,Entre Besares y Ruiz Huidobro,si,,59 - 60 - 68 - 152,Metrobus Norte - Av Cabildo
+-58.471875630703281,-34.544208012881228,119,Correa,CABILDO AV,,Entre Ruiz Huidobro y Correa,si,,133 - 161 - 168 - 184,Metrobus Norte - Av Cabildo
+-58.472300577553391,-34.543416655869748,120,Ramallo,CABILDO AV,,Entre Correa y Ramallo,si,59 - 68 - 152 - 161,,Metrobus Norte - Av Cabildo
+-58.47286213914677,-34.542675528809966,121,Arias,CABILDO AV,,Entre Ramallo y Arias,si,60 - 133 - 168 - 184,,Metrobus Norte - Av Cabildo
+-58.473590659621522,-34.541890421825855,122,Deheza,CABILDO AV,,Entre Arias y Deheza,si,,59 - 60 - 68 - 152,Metrobus Norte - Av Cabildo
+-58.474122892468586,-34.541152323482741,123,Pico,CABILDO AV,,Entre Deheza y Pico,si,,133 - 161 - 168 - 184,Metrobus Norte - Av Cabildo
+-58.475783618449846,-34.53883167346131,124,Gral Paz,CABILDO AV,PAZ GRAL AV,Debajo de la Av Gral Paz,si,19 - 71 - 161 - 130 - 152 - 184,,Metrobus Norte - Av Cabildo
+-58.475912648389411,-34.538888182782138,125,Gral Paz,CABILDO AV,PAZ GRAL AV,Debajo de la Av Gral Paz,si,,59 - 60 - 68 - 133 - 152 - 161 - 168 - 184,Metrobus Norte - Av Cabildo
+-58.475624227908767,-34.53875632614924,126,Gral Paz,CABILDO AV,PAZ GRAL AV,Debajo de la Av Gral Paz,si,21 - 59 - 60 - 68 - 133 - 151 - 168,,Metrobus Norte - Av Cabildo
+-58.476079629929508,-34.5389698092415,127,Gral Paz,CABILDO AV,PAZ GRAL AV,Debajo de la Av Gral Paz,si,,19 - 71 - 130 - 151,Metrobus Norte - Av Cabildo
+-58.47729341248322,-34.535904855310072,128,Laprida,MAIPU AV,,Entre Aristóbulo del Valle y Francisco Narciso de Laprida,si,19 - 59 - 60 -71 - 130 - 152,,Metrobus Norte - Av Maipú (provincia)
+-58.47778653637279,-34.534937619870675,129,Alsina,MAIPU AV,,Entre Narciso de Laprida y Adolfo Alsina,si,21 - 161 - 168 - 184 - 203 - 314 - 365,,Metrobus Norte - Av Maipú (provincia)
+-58.478370726632477,-34.534020613533038,130,Álvarez,MAIPU AV,,Entre Adolfo Alsina y Agustín Álvarez,si,,19 - 59 - 71 -152 - 161,Metrobus Norte - Av Maipú (provincia)
+-58.478856247719406,-34.53310361735754,131,Lavalle,MAIPU AV,,Entre Agustín Álvarez y Gral Lavalle,si,,60 - 130 - 168 - 203 - 314 - 365,Metrobus Norte - Av Maipú (provincia)
+-58.479189969660631,-34.53213011643097,132,Las Heras,MAIPU AV,,Entre Gral Lavalle y Las Heras,si,19 - 59 - 60 - 71 - 130 - 152 - 168,,Metrobus Norte - Av Maipú (provincia)
+-58.479690636878487,-34.531156591327729,133,Guemes,MAIPU AV,,Entre Las Heras y Guemes,si,21 - 161 - 184 - 203 - 314 - 365,,Metrobus Norte - Av Maipú (provincia)
+-58.480327886151535,-34.530170483650082,134,Melo,MAIPU AV,,Entre Guemes y Melo,si,,19 - 59- 71 -152,Metrobus Norte - Av Maipú (provincia)
+-58.480798202551973,-34.52932884577762,135,Haedo,MAIPU AV,,Entre Melo y Haedo,si,,60 - 130 - 168 - 203 - 314 - 365,Metrobus Norte - Av Maipú (provincia)
+-58.481306379518642,-34.528160621093711,136,Santa Rosa,MAIPU AV,,Entre Martin J. Haedo y Santa Rosa,si,19 - 59 - 71 - 152,,Metrobus Norte - Av Maipú (provincia)
+-58.481738741226962,-34.5273566673145,137,Roca,MAIPU AV,,Entre Santa Rosa y Roca,si,60 - 130 - 168 - 203 - 314 -365,,Metrobus Norte - Av Maipú (provincia)
+-58.482391133325663,-34.526452190711744,138,Urquiza,MAIPU AV,,Entre Roca y Urquiza,si,,19 - 59 - 71 - 152,Metrobus Norte - Av Maipú (provincia)
+-58.482922086927999,-34.525497487693741,139,Vergara,MAIPU AV,,Entre Urquiza y Vergara,si,,60 - 130 - 168 - 203 - 314 - 365,Metrobus Norte - Av Maipú (provincia)
+-58.483369525917247,-34.524410908575938,140,San Martín,MAIPU AV,,Entre Vergara y Gral San Martín,si,19 - 60 - 71 - 130 - 168,,Metrobus Norte - Av Maipú (provincia)
+-58.483892867336046,-34.523456202310996,141,Arenales,MAIPU AV,,Entre Gral San Martín y Arenales,si,59 - 152,,Metrobus Norte - Av Maipú (provincia)
+-58.484385856253368,-34.522545461665132,142,Libertad,MAIPU AV,,Entre Arenales y Libertad,si,203 - 314 - 365,,Metrobus Norte - Av Maipú (provincia)
+-58.485045743321443,-34.521540482857816,143,Yrigoyen,MAIPU AV,,Entre Libertad e Hipólito Yrigoyen,si,,19 - 59 - 71 - 152,Metrobus Norte - Av Maipú (provincia)
+-58.485667625501243,-34.520353376576452,144,Italia,MAIPU AV,,Entre Hipólito Yrigoyen e Italia,si,,21 - 60 - 203 - 314 - 365,Metrobus Norte - Av Maipú (provincia)
+-58.486243923286317,-34.519021827020794,145,Malaver,MAIPU AV,,Entre Italia y Antonio Malaver,si,19 - 21 - 59 - 60 - 71 - 152 - 203 - 314 - 365,,Metrobus Norte - Av Maipú (provincia)
+-58.469734654706464,-34.547045195035878,146,Paroissien,CABILDO AV,,Entre Av García del Río y Paroissien,si,,152 - 161 - 168 - 184 -194,Metrobus Norte - Av Cabildo
+-58.459314462146679,-34.60427631491541,147,Pappo Napolitano,AV SAN MARTIN,,Entre Juan B. Justo y Fragata Sarmiento,si,,Sentido Este: 24 - 57 - 105 - 135 - 146,Metrobus Av San Martín
+-58.465215193045232,-34.602774929580498,148,Donato Álvarez,AV SAN MARTIN,,Entre Juan A. García y Adolfo Dickman,si,Sentido Oeste: 24 - 57 - 105 - 109 - 135 - 146,Sentido Este: 24 - 57 - 105 - 109 - 135 - 146,Metrobus Av San Martín
+-58.470119655218106,-34.601585413554091,149,Argentinos Juniors,AV SAN MARTIN,,Entre Álvarez Jonte y Miguel Ángel,si,Sentido Oeste: 24 - 57 - 105 - 146,Sentido Este: 24 - 57 - 105 - 146,Metrobus Av San Martín
+-58.480939832332979,-34.598762427287816,150,Empedrado,AV SAN MARTIN,,Entre Basilio Cittadini y Gral Rivas,si,Sentido Oeste: 47 - 57 - 78 - 105 - 146,Sentido Este: 47 - 57 - 78 - 105 - 146,Metrobus Av San Martín
+-58.483526239117943,-34.597751897357206,151,Agronomía,AV SAN MARTIN,,Entre Gral Rivas y Melincué,si,Sentido Oeste: 57 - 78 - 105 - 146,Sentido Este: 57 - 78 - 105 - 146,Metrobus Av San Martín
+-58.486892651625354,-34.597481367995051,152,2 de Abril,AV SAN MARTIN,,Entre Melincué y est. Plurinacional de Bolivia,si,Sentido Oeste: 57 - 78 - 105 - 146,Sentido Este: 57 - 78 - 105 - 146,Metrobus Av San Martín
+-58.491496752974747,-34.597162158662641,153,Comunicaciones,AV SAN MARTIN,,Entre Tinogasta y Nazca,si,Sentido Oeste: 57 - 78 - 105 - 146,Sentido Este: 57 - 78 - 105 - 146,Metrobus Av San Martín
+-58.495198618281506,-34.596915822264052,154,Roffo,AV SAN MARTIN,,Entre Nazca y Beiró,si,Sentido Oeste: 57 - 78 - 105 - 146,Sentido Este: 57 - 78 - 105 - 146,Metrobus Av San Martín
+-58.499382571572674,-34.595996721056672,155,Solano López,AV SAN MARTIN,,Entre Navarro y Pedro Morón,si,Sentido Oeste: 57 - 78,Sentido Este: 57 - 78 - 105,Metrobus Av San Martín
+-58.507502950065302,-34.592977814026412,156,Cubas,AV SAN MARTIN,,Entre Habana y Vallejos,si,Sentido Oeste: 57 - 78 - 123 - 176,Sentido Este: 57 - 78,Metrobus Av San Martín
+-58.51119218408256,-34.591631370530585,157,Mosconi,AV SAN MARTIN,,Entre Gabriela Mistral y Carlos Antonio López,si,Sentido Oeste: 57 - 78 - 87 - 123 - 176,Sentido Este: 57 - 78 - 123 - 176,Metrobus Av San Martín
+-58.515194768457583,-34.590420283315929,158,Ladines,AV SAN MARTIN,,Entre Griveo y Cabezón José León,si,Sentido Oeste: 57 - 78 - 87 - 123 - 176,Sentido Este: 57 - 78 - 87 - 123 - 176,Metrobus Av San Martín
+-58.46029314181515,-34.557972449217097,159,Monroe,CABILDO AV,,Entre Av Monroe y Roosevelt,si,,29 - 41 - 59 - 60 - 152 - 161,Metrobus Norte - Av Cabildo
+-58.459769062519811,-34.558547160904745,160,Blanco Encalada,CABILDO AV,,Entre Blanco Encalada y Av Monroe,si,,68 - 168 - 184,Metrobus Norte - Av Cabildo
+-58.459269359887443,-34.558910130896344,161,Blanco Encalada,CABILDO AV,,Entre Blanco Encalada y Av Monroe,si,161 - 168 - 184,,Metrobus Norte - Av Cabildo
+-58.458623381899841,-34.559676408430903,162,Olazábal,CABILDO AV,,Entre Olazábal y Blanco Encalada,si,29 - 41 - 59 - 60 - 68 - 152,,Metrobus Norte - Av Cabildo
+-58.45794081665759,-34.560654421056107,163,Mendoza,CABILDO AV,,Entre Mendoza y Olazábal,si,,29 - 41 - 59 - 60 - 68 - 152 - 161,Metrobus Norte - Av Cabildo
+-58.457002291806099,-34.561582003747048,164,Juramento,CABILDO AV,,Entre Juramento y Mendoza,si,57 - 194,,Metrobus Norte - Av Cabildo
+-58.455393320399018,-34.563437163396429,165,Sucre,CABILDO AV,,Entre Sucre y Echeverría,si,41 - 59 - 60 - 63 - 67 - 68 - 152 - 161 - 168 - 184,,Metrobus Norte - Av Cabildo
+-58.454698496326252,-34.564435322256578,166,La Pampa,CABILDO AV,,Entre La Pampa y Sucre,si,,44 - 63 - 65 - 80 - 168 - 184,Metrobus Norte - Av Cabildo
+-58.452845694867641,-34.565877034411372,167,Virrey del Pino,CABILDO AV,,Entre Virrey del Pino y José Hernández,si,,57 - 194,Metrobus Norte - Av Cabildo
+-58.451699890516572,-34.566471824635187,168,Virrey Arredondo,CABILDO AV,,Entre Virrey Arredondo y Virrey Olaguer y Feliú,si,,41 - 59 - 60 - 63 - 67 - 68 - 152 - 161,Metrobus Norte - Av Cabildo
+-58.449761751248857,-34.567389173752133,169,Virrey Loreto,CABILDO AV,,Entre Céspedes y Virrey Loreto,si,59 - 60 - 152,,Metrobus Norte - Av Cabildo
+-58.449030357540209,-34.567792407909316,170,Zabala,CABILDO AV,,Entre Céspedes y Virrey Loreto,si,41 - 63 - 67 - 68 - 161,,Metrobus Norte - Av Cabildo
+-58.448640259906576,-34.568115014676948,171,Céspedes,CABILDO AV,,Entre Céspedes y Zabala,si,,59 - 60 - 63 - 67,Metrobus Norte - Av Cabildo
+-58.447226209174779,-34.568860974164707,172,Aguilar,CABILDO AV,,Entre Aguilar y Céspedes,si,,41 - 68 - 152 - 161,Metrobus Norte - Av Cabildo
+-58.446763001793656,-34.568991991547243,173,Palpa,CABILDO AV,,Entre Palpa y Aguilar,si,59 - 60 - 152,,Metrobus Norte - Av Cabildo
+-58.444495600711825,-34.570100787238125,174,Olleros,CABILDO AV,,Entre Olleros y Av Federizo Lacroze,si,68 - 161,,Metrobus Norte - Av Cabildo
+-58.443044892482504,-34.570927355292881,175,Gorostiaga,CABILDO AV,,Entre Gorostiaga y Olleros,si,,41 - 60 - 67 - 68 - 152 - 161,Metrobus Norte - Av Cabildo
+-58.442240299158364,-34.571330536715251,176,Maure,CABILDO AV,,Entre Maure y Gorostiaga,si,,57 - 194,Metrobus Norte - Av Cabildo
+-58.441204078163764,-34.57181433495326,177,Jorge Newbery,CABILDO AV,,Entre Jorge Newbery y Maure,si,41 - 60 - 67 - 68 - 152 - 161,,Metrobus Norte - Av Cabildo
+-58.440253160904874,-34.572338471425113,178,Matienzo,CABILDO AV,,Entre Benjamín Matienzo y Jorge Newbery,si,57 - 194,,Metrobus Norte - Av Cabildo
+-58.424766143660179,-34.578924226729555,179,Oro,SANTA FE AV,,Entre Fray Justo Santamaría de Oro y Godoy Cruz,si,59 - 68 - 152 - 161,,Centro de Transbordo Pacífico
+-58.42388612913691,-34.579456266112182,180,Darregueyra,SANTA FE AV,,Entre Darregueyra y Fray Justo Santamaría de Oro,si,29 - 39 - 41 - 64 - 67 - 93,,Centro de Transbordo Pacífico
+-58.423230517939771,-34.579900466480069,181,Uriarte,SANTA FE AV,,Entre Uriarte y Darregueyra,si,108 - 111 - 118,,Centro de Transbordo Pacífico
+-58.422811162189056,-34.58017869722147,182,Uriarte,SANTA FE AV,,Entre Uriarte y Darregueyra,si,12 - 95 - 194,,Centro de Transbordo Pacífico
+-58.422226371093252,-34.580671751586749,184,Thames,SANTA FE AV,,Entre Uriarte y Thames,si,,55 - 160,Centro de Transbordo Pacífico
+-58.422669363640502,-34.580364228837958,185,Uriarte,SANTA FE AV,,Entre Uriarte y Darregueyra,si,,60 - 93,Centro de Transbordo Pacífico
+-58.423082823188174,-34.580071345780617,186,Uriarte,SANTA FE AV,,Entre Uriarte y Darregueyra,si,,59 - 108 - 118,Centro de Transbordo Pacífico
+-58.423856563397756,-34.579549045739036,187,Darregueyra,SANTA FE AV,,Entre Darregueyra y Fray Justo Santamaría de Oro,si,,12 - 15 - 29 - 95 - 111,Centro de Transbordo Pacífico
+-58.424772012644375,-34.579002366693224,188,Oro,SANTA FE AV,,Entre Fray Justo Santamaría de Oro y Godoy Cruz,si,,39 - 152,Centro de Transbordo Pacífico
+-58.427027956910209,-34.577992134594247,189,Juan B. Justo,SANTA FE AV,,Entre Av Juan B Justo y Humboldt,si,,64 - 68 - 161,Centro de Transbordo Pacífico
+-58.427978701163802,-34.577670088861836,190,Humboldt,SANTA FE AV,,Entre Humboldt y Fitz Roy,si,,41 - 57 - 67 - 194,Centro de Transbordo Pacífico
+-58.427211153479668,-34.577616148124243,191,Regimiento Patricios,SANTA FE AV,,Entre Humboldt y Av Bullrich,si,15 - 55 - 60,,Centro de Transbordo Pacífico
+-58.429556615152791,-34.577167758333147,192,Fitz Roy,SANTA FE AV,,Entre Fitz Roy y Bonpland,si,41 - 60 - 67 - 68 - 152 - 161,,Centro de Transbordo Pacífico
+-58.446380133348484,-34.569179597368112,193,Teodoro García,CABILDO AV,,Entre Teodoro García y Palpa,si,41 - 63 - 67,,Metrobus Norte - Av Cabildo
+-58.369319067359427,-34.614190013419041,194,México,PASEO COLON AV.,,Entre México y Rep. Bolivariana de Venezuela,si,,33 - 143 - 159,Metrobus del Bajo
+-58.369252170209194,-34.615289312195138,195,Chile,PASEO COLON AV.,,Entre Chile y México,si,,8 - 74 - 86 - 93,Metrobus del Bajo
+-58.36924538986424,-34.616456517894271,196,Av Independencia,PASEO COLON AV.,,Entre Av Independencia y Chile,si,,61 - 64 - 130 - 152,Metrobus del Bajo
+-58.369004631355359,-34.616438236932716,197,Av Independencia,PASEO COLON AV.,,Entre Av Independencia y Chile,si,29 - 62 - 152,,Metrobus del Bajo
+-58.369104426701156,-34.615284674863169,198,Chile,PASEO COLON AV.,,Entre Chile y México,si,33 - 64 - 130 -143,,Metrobus del Bajo
+-58.369176797892464,-34.614185380365377,199,México,PASEO COLON AV.,,Entre México y Rep. Bolivariana de Venezuela,si,74 - 93 - 159,,Metrobus del Bajo
+-58.369464053066942,-34.611765219900597,200,Av Belgrano,PASEO COLON AV.,,Entre Av Belgrano y Moreno,si,,61 - 64 - 93 - 111 - 130 - 152,Metrobus del Bajo
+-58.369487275739424,-34.610570881388313,201,Moreno,PASEO COLON AV.,,Entre Moreno y Adolfo Alsina,si,,8 - 33 - 74 - 86 - 143 - 159,Metrobus del Bajo
+-58.369520986380621,-34.609783717659383,202,Alsina,PASEO COLON AV.,,Entre Adolfo Alsina e Hipólito Yrigoyen,si,,195,Metrobus del Bajo
+-58.369422503944435,-34.609774594250801,203,Alsina,PASEO COLON AV.,,Entre Adolfo Alsina e Hipólito Yrigoyen,si,195,,Metrobus del Bajo
+-58.369388782254298,-34.610570806098814,204,Moreno,PASEO COLON AV.,,Entre Moreno y Adolfo Alsina,si,29 - 64 - 74 - 93 - 159,,Metrobus del Bajo
+-58.369321792793436,-34.611756062948416,205,Av Belgrano,PASEO COLON AV.,,Entre Av Belgrano y Moreno,si,33 - 62 - 130 - 143 - 152,,Metrobus del Bajo
+-58.37006281609262,-34.604748829610315,206,Perón,ALEM LEANDRO N. AV.,,Entre Perón Juan D y Sarmiento,si,7 - 22 - 28 - 33 - 126 - 143,,Metrobus del Bajo
+-58.37014610297912,-34.603654064988582,207,Sarmiento,ALEM LEANDRO N. AV.,,Entre Sarmiento y Av Corrientes,si,56 - 62 - 91 - 93 - 130 - 152,,Metrobus del Bajo
+-58.370271935307713,-34.603663208537036,208,Sarmiento,ALEM LEANDRO N. AV.,,Entre Sarmiento y Av Corrientes,si,,22 - 28 - 50 - 56 - 91 - 126,Metrobus del Bajo
+-58.370471486761986,-34.601328932598378,209,Lavalle,ALEM LEANDRO N. AV.,,Entre Lavalle y Tucumán,si,,7 - 33 - 143 - 195,Metrobus del Bajo
+-58.370377223833032,-34.60245988222691,210,Av Corrientes,ALEM LEANDRO N. AV.,,Entre Av Corrientes y Lavalle,si,,61 - 93 - 130 - 152,Metrobus del Bajo
+-58.371410981811252,-34.597755611595467,211,Av Córdoba,ALEM LEANDRO N. AV.,,Entre Av Córdoba y Paraguay,si,7 - 22 - 33 - 62 - 143 - 152,,Metrobus del Bajo
+-58.371586049513354,-34.597760266527231,212,Av Córdoba,ALEM LEANDRO N. AV.,,Entre Av Córdoba y Paraguay,si,,22 - 28 - 50 - 56 - 61 - 126 - 152,Metrobus del Bajo
+-58.370604155224648,-34.600098481808622,213,Tucumán,ALEM LEANDRO N. AV.,,Entre Tucumán y Viamonte,si,6 - 26 - 50 - 195,,Metrobus del Bajo
+-58.370889885880963,-34.598981248029297,214,Viamonte,ALEM LEANDRO N. AV.,,Entre Viamonte y Av Córdoba,si,23 - 93 - 115 - 130,,Metrobus del Bajo
+-58.373033680426843,-34.594707579474665,215,Ricardo Rojas,ALEM LEANDRO N. AV.,,Entre Ricardo Rojas y San Martín,si,,7 - 33 - 143,Metrobus del Bajo
+-58.37262251917592,-34.595494468116748,216,Marcelo T. de Alvear,ALEM LEANDRO N. AV.,,Entre Marcelo T. de Alvear y Ricardo Rojas,si,,5 - 9- 45 - 91 - 93 - 130,Metrobus del Bajo
+-58.372074154513662,-34.596670324993163,217,Paraguay,ALEM LEANDRO N. AV.,,Entre Paraguay y Marcelo T. de Alvear,si,,6 - 23 - 26 -115 - 132,Metrobus del Bajo
+-58.371964769969871,-34.596638575094381,218,Paraguay,ALEM LEANDRO N. AV.,,Entre Paraguay y Marcelo T. de Alvear,si,28 - 56 - 91 - 126 - 132,,Metrobus del Bajo
+-58.469190793453848,-34.63062133320215,219,San Pedrito,RIVADAVIA AV.,,Entre San Pedrito Av y Lafuente,si,,25 - 53 - 85 - 92,Centro de Transbordo Flores - Roberto Arlt
+-58.468715018659232,-34.630499501711085,220,San Pedrito,RIVADAVIA AV.,,Entre San Pedrito Av y Lafuente,si,,1 - 2 - 5 - 49,Centro de Transbordo Flores - Roberto Arlt
+-58.467964503747218,-34.630311213682361,221,Lafuente,RIVADAVIA AV.,,Entre Lafuente y Culpina,si,,88 - 96 - 113 - 133,Centro de Transbordo Flores - Roberto Arlt
+-58.467676360216998,-34.630233681123016,222,Lafuente,RIVADAVIA AV.,,Entre Lafuente y Culpina,si,,36 - 55 - 76 - 141,Centro de Transbordo Flores - Roberto Arlt
+-58.467274300535621,-34.630128457686858,223,Lafuente,RIVADAVIA AV.,,Entre Lafuente y Culpina,si,,8 - 86 - 136 - 163,Centro de Transbordo Flores - Roberto Arlt
+-58.466577396640808,-34.629884770046068,224,Bolivia,RIVADAVIA AV.,,Entre Estado Plur. de Bolivia y Condarco,si,1 - 2 - 88 - 96,,Centro de Transbordo Flores - Roberto Arlt
+-58.466228947628835,-34.629796158155237,225,Bolivia,RIVADAVIA AV.,,Entre Estado Plur. de Bolivia y Condarco,si,8 - 86 - 136 - 163,,Centro de Transbordo Flores - Roberto Arlt
+-58.46590060192613,-34.629707544741798,226,Bolivia,RIVADAVIA AV.,,Entre Estado Plur. de Bolivia y Condarco,si,36 - 92 - 141,,Centro de Transbordo Flores - Roberto Arlt
+-58.4651568013443,-34.629519239235727,227,Artigas,RIVADAVIA AV.,,Entre José de Artigas y Estado Plur. de Bolivia,si,25 - 53 - 76 - 85,,Centro de Transbordo Flores - Roberto Arlt
+-58.464861962041738,-34.629430622342802,228,Artigas,RIVADAVIA AV.,,Entre José de Artigas y Estado Plur. de Bolivia,si,55 - 113 - 133,,Centro de Transbordo Flores - Roberto Arlt
+-58.464580525269618,-34.629353082339634,229,Artigas,RIVADAVIA AV.,,Entre José de Artigas y Estado Plur. de Bolivia,si,5 - 49 - 132,,Centro de Transbordo Flores - Roberto Arlt

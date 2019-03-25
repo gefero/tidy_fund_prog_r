@@ -243,7 +243,7 @@ Para implementar en R una regresión lineal simple usamos la función ``lm()``
 
 ```{r, highlight=TRUE, prompt=TRUE, strip.white=FALSE, collapse=TRUE, tidy=TRUE}
 
-model <- lm(formula = robo_automovil~p_hognbi, data=radios_delitos)
+model <- lm(formula = robo_automovil~p_hognbi + , data=radios_delitos)
 
 ```
 
