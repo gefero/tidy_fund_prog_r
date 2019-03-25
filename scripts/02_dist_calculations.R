@@ -10,7 +10,7 @@ bancos <- read.csv('./data/bancos.csv')
 ffcc <- read.csv('./data/estaciones-de-ferrocarril.csv')
 subte <- read.csv('./data/estaciones-de-subte.csv')
 metrobus <- read.csv('./data/estaciones-de-metrobus.csv')
-colectivos <- read.csv('./data/paradas-de-colectivo.csv', sep=";")
+colectivos <- read.csv('./data/paradas-de-colectivo.csv', sep=";", dec=",")
 
 # Generación de tipo de punto
 comisarias$tipo <- 'Comisaria'
@@ -20,6 +20,16 @@ ffcc$tipo <- "FFCC"
 subte$tipo <- "Subte"
 metrobus$tipo <- "Metrobus"
 colectivos$tipo <- "Colectivos"
+
+#check colectivos
+colectivos$LINEAS %>%
+        as.character() %>%
+        str_split(., "[:punct:]") %>%
+        unlist() %>%
+        unique() %>%
+        as.integer() %>%
+        sort()
+
 
 # Unificación de objetos
 
@@ -79,32 +89,46 @@ radios_gral$dist_seguridad <- radios_gral %>%
         ) %>%
         apply(., 1, FUN=min)
 
-radios_gral$dist_tren_subte <- radios_gral %>% 
+radios_gral$dist_tren <- radios_gral %>% 
         st_centroid() %>%
         st_distance(final %>% 
-                            filter(tipo=='Tren' | tipo=='Subte')
+                            filter(tipo=='FFCC')
         ) %>%
         apply(., 1, FUN=min)
 
-radios_gral$dist_colectivo_metro <- radios_gral %>% 
+radios_gral$dist_subte <- radios_gral %>% 
         st_centroid() %>%
         st_distance(final %>% 
-                            filter(tipo=='Metrobus' | tipo=='Colectivo')
+                            filter(tipo=='Subte')
         ) %>%
         apply(., 1, FUN=min)
 
 
 
+radios_gral$dist_colectivo <- radios_gral %>% 
+        st_centroid() %>%
+        st_distance(final %>% 
+                            filter(tipo=='Colectivos')
+        ) %>%
+        apply(., 1, FUN=min)
 
+radios_gral$dist_metrobus <- radios_gral %>% 
+        st_centroid() %>%
+        st_distance(final %>% 
+                            filter(tipo=='Metrobus')
+        ) %>%
+        apply(., 1, FUN=min)
 
 
 st_write(radios_gral, dsn = "./data/radios_info_gral.geojson", 
          driver = "GeoJSON", delete_dsn = TRUE)
 
 
+radios_gral <- st_read("./data/radios_info_gral.geojson")
+
 # Plot
 ggplot() + 
-        geom_sf(data = radios_gral, aes(fill=dist_seg), color=NA) +
+        geom_sf(data = radios_gral, aes(fill=dist_seguridad), color=NA) +
         scale_fill_viridis_c() + 
         theme_minimal() + 
         labs(title = "Distancia a comisaría o destacamento de bomberos",
@@ -112,5 +136,53 @@ ggplot() +
              fill = "distancias en mts.")
 
 
-cond_act <- st_read('./data/nbi_radio.geojson')
+# Plot
+ggplot() + 
+        geom_sf(data = radios_gral, aes(fill=dist_bancos), color=NA) +
+        scale_fill_viridis_c() + 
+        theme_minimal() + 
+        labs(title = "Distancia a bancos",
+             subtitle = "Radios censales, Ciudad de Buenos Aires",
+             fill = "distancias en mts.")
+
+
+# Plot
+ggplot() + 
+        geom_sf(data = radios_gral, aes(fill=dist_tren), color=NA) +
+        scale_fill_viridis_c() + 
+        theme_minimal() + 
+        labs(title = "Distancia a estaciones de tren",
+             subtitle = "Radios censales, Ciudad de Buenos Aires",
+             fill = "distancias en mts.")
+
+
+# Plot
+ggplot() + 
+        geom_sf(data = radios_gral, aes(fill=dist_subte), color=NA) +
+        scale_fill_viridis_c() + 
+        theme_minimal() + 
+        labs(title = "Distancia a estaciones de subte",
+             subtitle = "Radios censales, Ciudad de Buenos Aires",
+             fill = "distancias en mts.")
+
+
+# Plot
+ggplot() + 
+        geom_sf(data = radios_gral, aes(fill=dist_colectivo), color=NA) +
+        scale_fill_viridis_c() + 
+        theme_minimal() + 
+        labs(title = "Distancia a estaciones de colectivo",
+             subtitle = "Radios censales, Ciudad de Buenos Aires",
+             fill = "distancias en mts.")
+
+
+# Plot
+ggplot() + 
+        geom_sf(data = radios_gral, aes(fill=dist_metrobus), color=NA) +
+        scale_fill_viridis_c() + 
+        theme_minimal() + 
+        labs(title = "Distancia a estaciones de metrobus",
+             subtitle = "Radios censales, Ciudad de Buenos Aires",
+             fill = "distancias en mts.")
+
 

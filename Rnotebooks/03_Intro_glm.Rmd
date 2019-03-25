@@ -45,7 +45,7 @@ delitos <- delitos %>%
 Bien, ahora traigamos un datasets con información acerca de los radios censales de la ciudad.
 
 ```{r}
-radios_gral <- st_read('../data/radios_gral.geojson')
+radios_gral <- st_read('../data/radios_info_gral.geojson')
 str(radios_gral)
 ```
 
@@ -86,7 +86,6 @@ delitos_radio <- st_join(delitos,
                           join = st_within) %>%
         as_tibble() 
 head(delitos)
-
 ```
 
 Luego, contamos la cantidad de puntos en cada radio con un simple `group_by + summarise0` y realizamos un `left_join` con la tabla original de radios.
@@ -243,10 +242,9 @@ Para implementar en R una regresión lineal simple usamos la función ``lm()``
 
 ```{r, highlight=TRUE, prompt=TRUE, strip.white=FALSE, collapse=TRUE, tidy=TRUE}
 
-model <- lm(formula = robo_automovil~p_hognbi + , data=radios_delitos)
+model <- lm(formula = n_delitos~ AREA_KM2, data=radios_delitos)
 
 ```
-
 
 Si imprimimos el modelo... solamente nos da una información básica: el intercepto y el valor de la pendiente.
 
@@ -255,13 +253,14 @@ summary(model)
 ```
 Ahora tenemos acceso a mucha más información:
 * p-valores y errores estándar de los coeficientes. ¿Son significativos?
-* $R^2$: menos del 1% de la variancia de la variable dependiente es explicada por el modelo
-        
+* $R^2$: menos del 10% de la variancia de la variable dependiente es explicada por el modelo
+
+Veamos qué hay dentro del objeto `model`. Usamos la función ``names`` para acceder a los objetos dentro del objeto ``model``. Luego, podemos ir usando los nombres para acceder a los diferentes elementos.
+
+     
 ```{r, highlight=TRUE, prompt=TRUE, strip.white=FALSE, collapse=TRUE, tidy=TRUE}
 names(model)
 ```
-
-Usamos la función ``names`` para acceder a los objetos dentro del objeto ``model``. Luego, podemos ir usando los nombres para acceder a los diferentes elementos.
 
 
 ```{r, highlight=TRUE, prompt=TRUE, strip.white=FALSE, collapse=TRUE, tidy=TRUE}
@@ -280,50 +279,58 @@ confint(model,level=0.95)
 Veamos la función ``predict()``
 
 ```{r, highlight=TRUE, prompt=TRUE, strip.white=FALSE, collapse=TRUE, tidy=TRUE}
-predict(model, data.frame(p_hognbi = c(5,10,50), interval = "prediction"))
+predict(model, data.frame(AREA_KM2 = c(1, 10, 100), interval = "prediction"))
 ```
 
-
- *%% ARRANCAR DESDE ACA %%*
- 
-Es decir, que para si la variable independiente ``lstat`` presentara los valores 5, 10 y 15, la variable dependiente ``medv`` presentaría esos valores (en la media).
+Es decir, que para si la variable independiente `AREA_KM2` presentara los valores 1, 10 y 100, la variable dependiente `n_delitos` presentaría esos valores (en la media).
 
 Grafiquemos, ahora, todo.
 
-```{r, fig.width=4, fig.height=3.5}
-plot(log(Boston$lstat),Boston$medv,
-     xlab = "Log del % de hogares con NES bajo", 
-     ylab = "Valor Mediano de las Viviendas", 
-     col = "red", 
-     pch = 20)
-abline(model, col="blue")
+```{r, highlight=TRUE, prompt=TRUE, strip.white=FALSE, collapse=TRUE, tidy=TRUE}
+ggplot(data=radios_delitos, aes(x=AREA_KM2, y=n_delitos)) + 
+        geom_point() + 
+        geom_smooth(method='lm')
 ```
 
 Generemos un modelo, ahora, que contenga todas las variables del dataset. Veamos, primero, la correlación entre varias variables: 
 
 ```{r, highlight=TRUE, prompt=TRUE, strip.white=FALSE, collapse=TRUE, tidy=TRUE}
-cor(Boston[,10:14])
+select(as.data.frame(radios_delitos), -c(RADIO:HOGARES_NBI,geometry)) %>%
+        cor(method = 'pearson')
 ```
 
 La función ``cor`` tiene varios argumentos
 * ``x``, ``y``: las variables (si todas son cuantitativas podemos pasar todo el dataframe)
 * ``method``: qué coeficiente(s) se va(n) a usar... ¿Pearson, Spearmen o Kenndall)?
 
-Mucho mejor es verlo en una matriz de gráficos...
-``````{r, fig.width=4, fig.height=3.5}
-pairs(Boston[,10:14])
+Mucho mejor es verlo en un heatmap:
+
+
+```{r, highlight=TRUE, prompt=TRUE, strip.white=FALSE, collapse=TRUE, tidy=TRUE}
+library(reshape2)
+select(as.data.frame(radios_delitos), -c(RADIO:HOGARES_NBI,geometry)) %>%
+        cor(method = 'pearson') %>%
+        melt() %>%
+        ggplot(aes(x=Var1, y=Var2, fill=value)) +
+                        geom_tile() + 
+                        scale_fill_viridis_c()
 ```
+
 
 Implementemos un modelo con todas las variables
 ```{r, highlight=TRUE, prompt=TRUE, strip.white=FALSE, collapse=TRUE, tidy=TRUE}
-model <- lm(medv~., data = Boston)
-summary(model)
+
+radios_delitos_l <- radios_delitos %>%
+        select(n_delitos, everything(), -c(RADIO:HOGARES_NBI, n_delitos_hab, robo_noviol:robo_automovil)) %>%
+        st_set_geometry(NULL)
+
+model <- lm(n_delitos~., data=radios_delitos_l)
 ```
+
 
 Pero momento... habíamos precisado en el primer modelo que ``lstat`` entraba en forma logarítmica...
 
 ```{r, highlight=TRUE, prompt=TRUE, strip.white=FALSE, collapse=TRUE, tidy=TRUE}
-model <- lm(medv~.-lstat + log(lstat), data = Boston)
 summary(model)
 ```
 
@@ -336,13 +343,19 @@ library(car)
 vif(model)
 ```
 
-Pareciera que ``tax`` y ``rad`` están muy correlacionadas con al menos un predictor. Entonces, podríamos reestimar el modelo eliminándolas.
+Pareciera que las variables vinculadas a las calidades de la vivienda y la proproción de hogares con NBI se encuentran correlacionadas con más de un predictor (seguramente, muy correlacionadas entre sí). Entonces, podríamos reestimar el modelo eliminándolas.
 
 ```{r, highlight=TRUE, prompt=TRUE, strip.white=FALSE, collapse=TRUE, tidy=TRUE}
-model <- lm(medv~.-lstat + log(lstat) -tax -rad, data = Boston)
+model <- lm(n_delitos~. -tasa_cal_construct_insuf -tasa_cal_serv_insuf -tasa_cal_mat_insuf, data = radios_delitos_l)
+
+summary(model)
 ```
 
+
+
 ## Implementación en R ``lm()``: interacciones 
+
+##### TERMINAR ESTA PARTE
 
 Supongamos que quisiéramos agregar alguna interacción podemos hacerlo con la siguiente sintaxis ``log(lstat)*age`` que agrega tanto los términos de interacción como los efectos de cada variable por separado. 
 
