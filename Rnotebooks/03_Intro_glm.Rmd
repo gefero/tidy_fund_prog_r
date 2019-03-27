@@ -355,15 +355,11 @@ summary(model)
 
 ## Implementación en R ``lm()``: interacciones 
 
-##### TERMINAR ESTA PARTE
-
-Supongamos que quisiéramos agregar alguna interacción podemos hacerlo con la siguiente sintaxis ``log(lstat)*age`` que agrega tanto los términos de interacción como los efectos de cada variable por separado. 
+Supongamos que quisiéramos agregar alguna interacción podemos hacerlo con la siguiente sintaxis ``p_hogaresnbi*dist_seg`` que agrega tanto los términos de interacción como los efectos de cada variable por separado. 
 
 Si quisiéramos introducir solamente la interacción deberíamos usar ``log(lstat)*age``
 ```{r, highlight=TRUE, prompt=TRUE, strip.white=FALSE, collapse=TRUE, tidy=TRUE}
-mod<-lm(medv ~ log(lstat)*age, data=Boston)
-model <- lm(medv ~ log(lstat)*age, data = Boston)
-mod
-model
+model<-lm(n_delitos ~ AREA_KM2*dist_seguridad, data=radios_delitos_l)
+summary(model)
 ```
 
