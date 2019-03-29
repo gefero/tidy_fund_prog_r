@@ -1,0 +1,84 @@
+---
+title: "Clasificación: Regresión logísitca y árboles de decisión en R"
+author: "Dr. Germán Rosati"
+output: html_notebook
+fig_width: 15
+fig_height: 20 
+---
+
+
+```{r include=FALSE}
+knitr::opts_chunk$set(message=FALSE, warning=TRUE, highlight=TRUE, echo=TRUE)
+```
+
+## Introducción
+Ahora que tenemos claros algunos aspectos relevantes del preprocesamiento de datos con `tidyverse`, podemos empezar a pensar en un análisis un poco más elaborado. Para ello, vamos a usar nuestro viejo y conocido dataset de delitos pero lo vamos a combinar con información censal correspondiente a los radios de la CABA.
+
+
+### Objetivos
+* Introducir nociones generales de modelos lineales 
+* Presentar las funciones en R para estimar y evaluar dichos modelos
+
+
+## Preprocesando el dataset
+Vamos a combinar información de los radios censales con nuestro dataset de delitos. La pregunta general que vamos a abordar es ¿qué características tienen los radios censales en los que se cometen delitos en la CABA?
+
+```{r warning=FALSE, include=FALSE}
+library(tidyverse)
+library(lubridate)
+library(sf)
+```
+
+
+Traigamos todo nuestro procesamiento...
+```{r}
+radios_gral <- st_read('../data/radios_info_gral.geojson')
+delitos <- read.csv('../data/delitos.csv')
+
+delitos <- delitos %>% 
+        filter(latitud!=0 | longitud!=0) %>%
+        mutate(fecha=ymd(fecha),
+               hora=hms(hora)) %>% 
+        st_as_sf( 
+                    coords=c('longitud', 'latitud'), 
+                    crs=4326)
+
+delitos_radio <- st_join(delitos, 
+                          radios_gral, 
+                          join = st_within) %>%
+                as_tibble() 
+
+
+radios_delitos <- delitos_radio %>%
+        group_by(RADIO_ID) %>%
+        summarise(n_delitos=n()) %>%
+        left_join(x=radios_gral) %>%
+        mutate(n_delitos_hab= n_delitos / POBLACION,
+               dens_pob=POBLACION/AREA_KM2,
+               n_delitos_hab = ifelse(n_delitos_hab >=0.6, 0.6, n_delitos_hab))
+        
+
+radios_delitos <- delitos_radio %>%
+        group_by(RADIO_ID, tipo_delito) %>%
+        summarize(n=n()) %>%
+        spread(key = tipo_delito, value = n) %>%
+        left_join(x=radios_delitos) %>%
+        replace(., is.na(.),0) %>%
+        rename(hom_doloso='Homicidio Doloso',
+               hom_segvial='Homicidio Seg Vial',
+               robo_noviol='Hurto (Sin violencia)',
+               hurto_auto = 'Hurto Automotor',
+               les_segvial='Lesiones Seg Vial',
+               robo_viol='Robo (Con violencia)',
+               robo_auto='Robo Automotor'
+               ) %>%
+        mutate(homicidio = hom_doloso + hom_segvial,
+               robo_automovil = hurto_auto + robo_auto,
+               p_hognbi= HOGARES_NBI / HOGARES * 100) %>%
+        select(-hom_doloso, -hom_segvial, -hurto_auto, -robo_auto) %>%
+        replace_na(list(p_hognbi=0))
+
+
+
+```
+
