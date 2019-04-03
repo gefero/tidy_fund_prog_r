@@ -21,7 +21,7 @@ Ahora que tenemos claros algunos aspectos relevantes del preprocesamiento de dat
 
 
 ## Preprocesando el dataset
-Vamos a combinar información de los radios censales con nuestro dataset de delitos. La pregunta general que vamos a abordar es ¿qué características tienen los radios censales en los que se cometen delitos en la CABA?
+Vamos a combinar información de los radios censales con nuestro dataset de delitos. La pregunta general que vamos a abordar es ¿podemos predecir qué radios de la CABA son peligrosos?
 
 ```{r warning=FALSE, include=FALSE}
 library(tidyverse)
@@ -29,8 +29,8 @@ library(lubridate)
 library(sf)
 ```
 
-
 Traigamos todo nuestro procesamiento...
+
 ```{r}
 radios_gral <- st_read('../data/radios_info_gral.geojson')
 delitos <- read.csv('../data/delitos.csv')
@@ -81,4 +81,232 @@ radios_delitos <- delitos_radio %>%
 
 
 ```
+
+## Generando la variable dependiente
+``
+Lo que vamos a tratar de hacer es construir un modelo que nos permita clasificar a los radios censales en "peligrosos" y "no peligrosos". Para ello vamos a construir una variable dicotómica.
+        
+```{r}
+radios_delitos_X <- radios_delitos %>%
+        mutate(peligroso = as.factor(if_else(n_delitos_hab > 0.09, 'Si', 'No'))) %>%
+        select(-c(RADIO:AREA_KM2, n_dptos:std_USS_M2, n_delitos:n_delitos_hab, robo_noviol:robo_automovil)) %>%
+        st_set_geometry(NULL)
+```
+
+Vemos que nuestro dataset ahora tiene una variable `peligroso`. 
+
+> ¿Cómo se construye esa variable?
+
+A su vez, aprovechamos y limpiamos el dataset de variables redundantes y/o que no vamos a utilizar.
+
+## Regresión logística
+
+Sabemos que para variables dependientes binarias o categóricas el modelo lineal no suele ser recomentable
+
+* La línea de regresión puede tomar valores negativos o mayores a 1
+* Solución: usar una función logística
+* En lugar de intentar predecir $E(Y|X)$ intentaremos predecir $P(Y=1|X)$
+* El modelo será: $P(Y=1|X)=\frac{e^\beta_{0}+\beta_{1}X}{1+e^\beta_{0}+\beta_{1}X}$
+
+
+### Implementación de una regresión logística en R: `glm()`
+Para eso usaremos la función `glm()` que sirve para ajustar una gran familia de modelos llamada "Modelos Lineales Generalizados" de los cuales la regresión logística es uno de ellos.
+
+La sintaxis de `glm()` es muy similar a la de `lm()` con la única diferencia de que debemos pasar un argumento ``family=binomial` para decirle a `R` que queremos correr una regresión logística en lugar de algún otro GLM.
+
+```{r}
+ggplot(data=radios_delitos_X) + 
+        geom_point(aes(x=dens_pob, y=dist_colectivo, color=peligroso))
+```
+
+Pareciera que hay una cierta relación -claramente no lineal- entre ambos predictores y nuestra variable dependiente.
+
+```{r}
+model <- glm(peligroso~., 
+             data=radios_delitos_X,
+             family = binomial)
+summary(model)
+```
+Vemos que ambas variables presentan signo negativo y son significativamente diferentes a cero.
+Al igual que en `lm()` podemos usar la función `coef()`
+
+```{r}
+coef(model)
+```
+
+
+La función `predict()` puede ser usada para generar predicciones acerca de la variable dependiente. Debemos usar el argumento ``type=response` para decirle a `R` que genere las probabilidades de que $P(Y=1|X)$ en lugar de otra información (como por ejemplo el logit)	
+
+Sabemos que esas son las probabilidades de que un radio sea considerado peligroso.
+
+```{r, collapse=TRUE, highlight=TRUE, prompt=FALSE, strip.white=FALSE, tidy=FALSE}
+model_probs<-predict(model ,type="response")
+contrasts(radios_delitos_X$peligroso)
+```
+
+```{r}
+model_pred<-rep("No", 3554)
+model_pred[model_probs>0.5]<-"Si"
+#model_pred <- as.factor(model_pred)
+table(model_pred, radios_delitos_X$peligroso)
+
+mean(model_pred == radios_delitos_X$peligroso)
+```
+
+La primera línea genera 1033 observaciones con el valor `No` por defecto.
+La segunda transforma en `Sí` a aquellas observaciones cuya `glm_probs > 0.5`	Una vez armadas las predicciones podemos usar `table()` para generar una matriz de confusión de modelo.
+Y calculando la media de las observaciones que en `model_pred` son iguales a las de `radios_delitos_X$peligroso` (la variable dependiente original), tenemos una medida del error de clasificación del modelo.
+
+A primera vista, el modelo parece funcionar bastante bien 73% de las observaciones son clasificadas bien. Pero hay un problema: la enorme mayoría de las observaciones no generaron un cese de pagos... Por lo cual, solamente observando eso el modelo aporta poca información... usando como modelo esa proporción estaríamos cerca de la performance de nuestro modelo.
+
+Además, hemos estimado el error sobre TODOS nuestros datos. Lo cual nos lleva a plantearnos el problema del "Test-Error" y el "Training-Error"
+
+(...)
+
+## Evaluando modelos de clasificación
+Entonces, ¿cómo lo implementamos en R? 
+
+```{r}
+set.seed(102)
+train <- sample(1:nrow(radios_delitos_X), nrow(radios_delitos_X)*0.7, replace=FALSE)
+
+model <- glm(peligroso~., 
+             data=radios_delitos_X,
+             subset =train,
+             family = binomial)
+```
+
+La lógica es generar 2488 números aleatorios sin reposición con la función `sample()` que varíen entre 1 y el total de filas del dataset `radios_delitos_X`.
+Luego, usamos ese vector como un índice de posición para poder hacer subsetting de `radios_delitos_X`.
+En tercer lugar, estimamos el mismo modelo de regresión logística pero pasando como argumento `subset = train`. 
+
+
+
+```{r}
+glm_probs<-predict(model 
+		   , newdata = radios_delitos_X[-train,]
+		   , type ="response")
+glm_pred<-rep('No',1067)
+glm_pred[glm_probs>0.5] <- 'Si'
+conf_matrix <- table(radios_delitos_X$peligroso[-train],glm_pred)
+
+mean(glm_pred==radios_delitos_X$peligroso[-train])
+```
+
+¿Qué pasa con el test error? Es más alto... No tanto... pero es para tener en cuenta.
+
+### Precision y recall... Yendo más allá del accuracy
+Existen otras métricas para evalaur un modelo de clasificación binario:
+
+* $precision = \frac{tp}{tp + fp}$: también llamada $sensitivy$ o $true positve rate$. Evalúa sobre el total de casos clasificados como positivos por el modelo, cuántos están bien clasificados. Precision es una buena medida cuando el costo de un $fp$ es alto. Un ejemplo obvio... es detección de spam. Sería costos clasificar un mail como span si no lo fuera. 
+
+* $recall = \frac{tp}{tp + fn}$: Evalua sobre el total de casos positivos, cuántos son captados bien por el modelo. Esta métrica suele ser adeucada cuando el costso de un $fn$ es algo. En detección de fraude, clasificar a un cliente como no fraudulento cuando lo es... puede se grave.
+
+* $f1 = 2 \times \frac{recall \times precision} {recall + precision}$: un compromiso entre ambas métricas.
+
+```{r}
+eval_binary <- function(conf_matrix){
+        
+        # conf_matrix tiene que tener en las filas los obervados y en las columnas los predichos. A su vez, la clase negativa tiene que ser la primera.
+        #Accuracy
+        acc <- (conf_matrix[1,1] + conf_matrix[2,2]) / sum(conf_matrix)
+        
+        # Precision
+        prec<-conf_matrix[2,2] / (conf_matrix[2,2] + conf_matrix[1,2])
+        
+        # Recall 
+        recall<-conf_matrix[2,2] / (conf_matrix[2,2] + conf_matrix[2,1])
+        # F1-score
+        f1 <-2*(prec*recall / (prec+recall))
+        
+        return(list(accuracy=acc, precision=prec, recall=recall, f1=f1))
+
+}
+
+eval_binary(conf_matrix)
+
+```
+
+
+## Árbol de decisión
+Usaremos la librería `tree` para construir árboles de decisión y clasificación. Vamos a trabajar con el dataset `radios_delitos_X`.
+
+```{r}
+library(tree)
+```
+
+Ahora usamos la función `tree` para generar un árbol de clasificación que prediga la variable nueva (dicotómica que acabamos de crear). Como vamos a ver la sintaxis de `tree()` es muy similar a la de `lm()` y `glm()`.
+
+```{r}
+
+tree_model <- tree(peligroso~., 
+                   data = radios_delitos_X, 
+                   subset = train,
+                   mindev=0.005,
+                   minsize=4)
+summary(tree_model)
+```
+
+Vemos que el Training Error es de 20%. En árboles de clasificación lo que reporta la función como "mean deviance" en el output de `summary()` es:
+$-2\sum_{m}\sum_{k}n_{mk}*log*\hat{p}_{mk}$
+
+donde $n_{mk}$ es el número de observaciones en la m-ésima terminal que corresponde a la k-ésima clase. Una desviación pequeña indica un árbol que provee un buen ajuste para los datos (de entrenamiento). La residual mean deviance es implemente ese valor dividido por $n-|T_{0}|$.
+
+Una cosa interesante y útil que proveen los árboles de decisión es que permiten tener una salida gráfica bastante útil e intuitiva del modelo. Usamos la función `plot()` para graficar la estructura y `text()` para agregarle las "etiquetas". El argumento `pretty=0` le dice a R que muestre las categorías completas de cada cualquier predictor cualitativo.
+
+```{r, tidy=TRUE}
+plot(tree_model)
+text(tree_model, pretty = 0)
+```
+
+La densidad de población y la distancia a bancos parecen ser los mejores predictores.
+
+Si tipeamos el nombre del objeto árbol R imprime un output correspondiente a cada rama. Imprime, además, el criterio de splitting (`dens_pob` < 25716), la cantidad de observciones en esa rama, el desvío, la predicción general de la rama (`No` o `Si`) y la fracción de observaciones dentro de esa rama que toman valores `No` y `Si` . Las ramas que llegan hasta las terminales aparecen con asteriscos.
+
+```{r, tidy=TRUE}
+tree_model
+```
+
+Para evaluar la performance de clasificacione en estos datos, tensmo sque esimar el test error. Dividimos las observaciones en test y training sets, creamos un árbol en el training set y evaluamos en el test-set. La función `predict()` se puede usar (de la misma forma que el `glm()` o `lm()`). En el caso de un árbol de clasificación el argumento `type="class"` le dice a R que devuelva la categoría predicha. En este caso, vemos que la tasa de predicciones correctas cambia a 71.5 % sobre el test set.
+
+
+```{r, tidy=TRUE}
+tree_preds <- predict(tree_model, radios_delitos_X[-train,], type = "class")
+conf_matrix <- table(radios_delitos_X$peligroso[-train], tree_preds)
+eval_binary(conf_matrix)
+```
+
+Luego, podemos pensar en "podar" el árbol para obtener mejores resultados. la función `cv.tree()` realiza una validación cruzada para determinar el nivel óptimo de complejidad del árbol. "Cost complexity prunning" (podado basado en costo-complejidad) se usa para seleccinar una secuencia de árboles. Usamos el argumento `FUN = prune` para indicar que queremos que el error de clasificación sea el valor que se use para el proceso de podado. La función `cv.tree()` usa por defecto el desvío. A su vez, `cv.tree()` reporta la cantidad de nodos terminales en cada árbol considerado (size), así como el parámetro de costo-complejidad usado (k que se corresponde con lo que llamamos antes $\alpha$).
+
+
+
+```{r, tidy=TRUE}
+set.seed(789)
+cv_radios_delitos <- cv.tree(tree_model, K=20, FUN=prune.misclass)
+names(cv_radios_delitos)
+```
+
+Notar que, a pesar del nombre `dev` corresponde a la tasa de error "cros-validada". El árbol con 4 nodos terminales es el que tiene el menor error de clasificación "cross-validado" (50). Graficamos la tasa de error como una función del tamaño del árbol y de k.
+
+
+```{r, tidy=TRUE}
+#$par(mfrow=c(1,2))
+plot(cv_radios_delitos$size, cv_radios_delitos$dev, type="b")
+```
+Ahora, podemos aplciar`prune.misclass()`para podar el árbol y quedarnos con el de 9 nodos.
+```{r, tidy=TRUE}
+prune_tree <- prune.misclass(tree_model, best = 4)
+plot(prune_tree)
+text(prune_tree, pretty = 0)
+```
+¿Qué tan bien funciona este árbol de 9 nodos en el test-set? Usamos de nuevo `predict()`: 
+
+```{r, tidy=TRUE}
+prune_pred <- predict(prune_tree, radios_delitos_X[-train,], type="class")
+conf_matrix2 <- table(radios_delitos_X$peligroso[-train], prune_pred)
+eval_binary(conf_matrix2)
+```
+Ahora, el 78% de las observaciones están bien clasificadas. Y la mejora más importante se revela en al precision.
+
+Es decir, que este proceso de cost-complexity prunning generó no solamente un árbol más interpretable sino que además mejoró la performance preditiva. Si incrementamos el valor de `best`, obtenemos un árbol más grande y con peor performance de clasificación.
 

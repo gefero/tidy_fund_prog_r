@@ -186,3 +186,131 @@ ggplot() +
              fill = "distancias en mts.")
 
 
+
+## Agrega precios de departamentos
+
+
+dptos16 <- read.csv('./data/departamentos-en-venta-2016.csv',
+                  sep=";") %>% 
+        select(U_S_M2, LONGITUD, LATITUD) %>%
+        mutate(period=2016)
+
+
+dptos15 <- read.csv('./data/departamentos-en-venta-2015.csv',
+                    sep=";", stringsAsFactors = FALSE) %>%
+        select(U_S_M2, LONGITUD, LATITUD) %>%
+        mutate(period=2015,
+               U_S_M2=as.numeric(str_replace(U_S_M2, ",", ".")))
+
+dptos13 <- read.csv('./data/departamentos-en-venta-2013.csv',
+                    sep=";", stringsAsFactors = FALSE) %>%
+        select(U_S_M2, LON, LAT) %>%
+        mutate(period=2013) %>%
+        rename(LONGITUD=LON, LATITUD=LAT)
+
+
+dptos14 <- read.csv('./data/departamentos-en-venta-2014.csv',
+                    sep=";", stringsAsFactors = FALSE) %>%
+        select(U_S_M2, LON, LAT) %>%
+        mutate(period=2014) %>%
+        rename(LONGITUD=LON, LATITUD=LAT)
+
+
+
+dptos12 <- read.csv('./data/departamentos-en-venta-2012.csv',
+                    sep=";", stringsAsFactors = FALSE) %>%
+        select(U_S_M2, LON, LAT) %>%
+        mutate(period=2012) %>%
+        rename(LONGITUD=LON, LATITUD=LAT)
+
+dptos11 <- read.csv('./data/departamentos-en-venta-2011.csv',
+                    sep=";", stringsAsFactors = FALSE) %>%
+        select(U_S_M2, LON, LAT) %>%
+        mutate(period=2011) %>%
+        rename(LONGITUD=LON, LATITUD=LAT)
+
+dptos10 <- read.csv('./data/departamentos-en-venta-2010.csv',
+                    sep=";", stringsAsFactors = FALSE) %>%
+        select(U_S_M2, LON, LAT) %>%
+        mutate(period=2010) %>%
+        rename(LONGITUD=LON, LATITUD=LAT)
+
+
+dptos09 <- read.csv('./data/departamentos-en-venta-2009.csv',
+                    sep=";", stringsAsFactors = FALSE) %>%
+        select(U_S_M2, LON, LAT) %>%
+        mutate(period=2009) %>%
+        rename(LONGITUD=LON, LATITUD=LAT)
+
+
+radios_gral <- st_read("./data/radios_info_gral.geojson")
+
+dptos_final<- bind_rows(dptos09, dptos10, dptos11,dptos12, 
+                        dptos13, dptos14, dptos15, dptos16) %>%
+        filter(!is.na(LATITUD) | !is.na(LONGITUD)) %>%
+        st_as_sf(
+                coords=c('LONGITUD', 'LATITUD'), 
+                crs=4326)
+
+remove(dptos09, dptos10, dptos11,dptos12, 
+       dptos13, dptos14, dptos15, dptos16)
+        
+dptos_radio <- st_join(dptos_final, 
+                         select(radios_gral, RADIO), 
+                         join = st_within) %>%
+        as_tibble() 
+
+radios_gral <- dptos_radio %>%
+        group_by(RADIO) %>%
+        summarise(n_dptos=n(),
+                  mean_USS_M2 = mean(U_S_M2),
+                  std_USS_M2 = sd(U_S_M2),
+                  median_USS_M2 = median(U_S_M2),
+                  mad_USS2_M2 = mad(U_S_M2)) %>%
+        left_join(x=radios_gral) %>%
+        replace(., is.na(.),0) 
+
+
+radios_gral <- radios_gral %>%
+        replace(., is.na(.),0) 
+
+ggplot() + 
+        geom_sf(data=radios_gral, aes(fill=mean_USS_M2), color=NA) +
+        scale_fill_viridis_c() +
+        theme_minimal() + 
+        labs(title = "Precio medio del M2 (en U$S)",
+             subtitle = "Radios censales, Ciudad de Buenos Aires",
+             fill = "U$S / M2.")
+
+ggplot() + 
+        geom_sf(data=radios_gral, aes(fill=std_USS_M2), color=NA) +
+        scale_fill_viridis_c() +
+        theme_minimal() + 
+        labs(title = "Desvío estándar del precio del M2 (en U$S)",
+             subtitle = "Radios censales, Ciudad de Buenos Aires",
+             fill = "U$S / M2.")
+
+ggplot() + 
+        geom_sf(data=radios_gral, aes(fill=median_USS_M2), color=NA) +
+        scale_fill_viridis_c() +
+        theme_minimal() + 
+        labs(title = "Precio mediano del M2 (en U$S)",
+             subtitle = "Radios censales, Ciudad de Buenos Aires",
+             fill = "U$S / M2.")
+
+
+ggplot() + 
+        geom_sf(data=radios_gral, aes(fill=mad_USS2_M2), color=NA) +
+        scale_fill_viridis_c() +
+        theme_minimal() + 
+        labs(title = "Desvío absoluto mediano del precio del M2 (en U$S)",
+             subtitle = "Radios censales, Ciudad de Buenos Aires",
+             fill = "U$S / M2.")
+
+
+
+st_write(radios_gral, dsn = "./data/radios_info_gral.geojson", 
+         driver = "GeoJSON", delete_dsn = TRUE)
+
+st_write(dptos_final, dsn = "./data/precios_dptos09_16.geojson", 
+         driver = "GeoJSON", delete_dsn = TRUE)

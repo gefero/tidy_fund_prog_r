@@ -1,6 +1,6 @@
 ---
 title: "Fundamentos de la programación estadística y Data Mining en R"
-author: "Dr. Germán Rosati (Digital House - UNTREF - UNSAM)"
+author: "Dr. Germán Rosati (CONICET - UNSAM - UNTREF)"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 subtitle: "Unidad 3. Regresión logística y árboles de decisión en R"
 output: slidy_presentation
@@ -20,8 +20,7 @@ output: slidy_presentation
 
 # Gráficos de dispersión
 ```{r, tidy=TRUE}
-setwd("/media/grosati/Elements/PEN/KINGSTON/PEN2/Cursos/REPO_Curso_Fund_Prog_R/Data/")
-default<-read.csv("default.csv")
+default<-read.csv("../data/default.csv")
 plot(default$balance,default$income
       , col=c("lightblue","green")[default$default]
       , main = "Gráfico de disp. de Ingresos por balance")
