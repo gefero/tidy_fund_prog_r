@@ -1,9 +1,11 @@
 ---
-title: "Clasificación: Regresión logísitca y árboles de decisión en R"
-author: "Dr. Germán Rosati"
-output: html_notebook
+title: "Regresion logística y Arboles de decision en R"
+author: "Dr. German Rosati"
 fig_width: 15
-fig_height: 20 
+output:
+  pdf_document: default
+  html_notebook: default
+fig_height: 20
 ---
 
 
@@ -148,16 +150,16 @@ contrasts(radios_delitos_X$peligroso)
 model_pred<-rep("No", 3554)
 model_pred[model_probs>0.5]<-"Si"
 #model_pred <- as.factor(model_pred)
-table(model_pred, radios_delitos_X$peligroso)
+table(radios_delitos_X$peligroso, model_pred)
 
 mean(model_pred == radios_delitos_X$peligroso)
 ```
 
-La primera línea genera 1033 observaciones con el valor `No` por defecto.
+La primera línea genera 3554 observaciones con el valor `No` por defecto.
 La segunda transforma en `Sí` a aquellas observaciones cuya `glm_probs > 0.5`	Una vez armadas las predicciones podemos usar `table()` para generar una matriz de confusión de modelo.
 Y calculando la media de las observaciones que en `model_pred` son iguales a las de `radios_delitos_X$peligroso` (la variable dependiente original), tenemos una medida del error de clasificación del modelo.
 
-A primera vista, el modelo parece funcionar bastante bien 73% de las observaciones son clasificadas bien. Pero hay un problema: la enorme mayoría de las observaciones no generaron un cese de pagos... Por lo cual, solamente observando eso el modelo aporta poca información... usando como modelo esa proporción estaríamos cerca de la performance de nuestro modelo.
+A primera vista, el modelo parece funcionar bastante bien 77% de las observaciones son clasificadas bien. Pero hay un problema: la enorme mayoría de las observaciones no generaron un cese de pagos... Por lo cual, solamente observando eso el modelo aporta poca información... usando como modelo esa proporción estaríamos cerca de la performance de nuestro modelo.
 
 Además, hemos estimado el error sobre TODOS nuestros datos. Lo cual nos lleva a plantearnos el problema del "Test-Error" y el "Training-Error"
 
@@ -177,6 +179,7 @@ model <- glm(peligroso~.,
 ```
 
 La lógica es generar 2488 números aleatorios sin reposición con la función `sample()` que varíen entre 1 y el total de filas del dataset `radios_delitos_X`.
+
 Luego, usamos ese vector como un índice de posición para poder hacer subsetting de `radios_delitos_X`.
 En tercer lugar, estimamos el mismo modelo de regresión logística pero pasando como argumento `subset = train`. 
 

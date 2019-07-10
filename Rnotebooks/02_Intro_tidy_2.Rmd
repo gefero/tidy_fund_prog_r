@@ -1,6 +1,6 @@
 ---
-title: "Introducción al `tidyverse` con datos geográficos. Capítulo 2."
-author: "Dr. Germán Rosati"
+title: "Introduccion al `tidyverse` con datos geograficos. II"
+author: "Dr. German Rosati"
 output: html_notebook
 fig_width: 15
 fig_height: 20 

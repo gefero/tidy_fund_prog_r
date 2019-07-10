@@ -1,6 +1,6 @@
 ---
-title: "Regresión lineal en R."
-author: "Dr. Germán Rosati"
+title: "Regresion lineal en R."
+author: "Dr. German Rosati"
 output: html_notebook
 fig_width: 15
 fig_height: 20 
